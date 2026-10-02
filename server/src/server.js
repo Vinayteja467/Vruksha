@@ -1,8 +1,15 @@
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDist = path.join(__dirname, '../../client/dist');
 
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
@@ -47,6 +54,17 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/bulk-orders', bulkRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Serve static client assets in production if client/dist exists
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // Error Handling
 app.use(notFound);

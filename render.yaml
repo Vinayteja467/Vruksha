@@ -1,0 +1,14 @@
+﻿services:
+  - type: web
+    name: vruksha-store
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build --prefix client && npm install --prefix server
+    startCommand: node server/src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
