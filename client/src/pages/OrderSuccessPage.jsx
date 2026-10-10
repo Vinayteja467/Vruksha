@@ -49,14 +49,14 @@ export const OrderSuccessPage = () => {
   return (
     <div className="bg-cream-50/50 min-h-screen py-10 sm:py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-10 shadow-soft text-center space-y-6">
+        <div className="card p-6 sm:p-10 text-center space-y-6">
           {/* Success Check Icon */}
           <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="badge bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600/20 py-1 px-3">
               Payment & Order Verified
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950 mt-3 mb-2">
@@ -120,7 +120,7 @@ export const OrderSuccessPage = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
             <Link
               to="/orders"
-              className="w-full sm:w-auto px-6 py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-sm"
+              className="btn-primary w-full sm:w-auto px-6 py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2"
             >
               <Truck className="w-4 h-4" />
               <span>TRACK ORDER</span>
@@ -128,7 +128,7 @@ export const OrderSuccessPage = () => {
 
             <Link
               to="/shop"
-              className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-cream-100 text-forest-900 border border-cream-300 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-2xs"
+              className="btn-secondary w-full sm:w-auto px-6 py-3.5 uppercase tracking-widest text-xs flex items-center justify-center gap-2"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>CONTINUE SHOPPING</span>

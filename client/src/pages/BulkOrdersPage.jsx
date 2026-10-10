@@ -76,10 +76,10 @@ export const BulkOrdersPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-10 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest-100 text-forest-800 text-xs font-semibold uppercase tracking-wider mb-4 border border-forest-200">
+          <div className="eyebrow mb-4">
             <Building2 className="w-3.5 h-3.5 text-forest-600" />
             <span>Industrial & Corporate Supply</span>
           </div>
@@ -100,7 +100,7 @@ export const BulkOrdersPage = () => {
             { title: 'Custom Packaging', desc: 'Nitrogen-flushed foil pouches, PET jars, or drums.' },
             { title: 'Consistent Sourcing', desc: 'Uniform color, mesh size, and microbiological compliance guaranteed.' }
           ].map((item, idx) => (
-            <div key={idx} className="bg-white p-5 rounded-2xl border border-cream-200 shadow-soft text-center">
+            <div key={idx} className="card card-hover p-5 text-center">
               <span className="w-8 h-8 rounded-full bg-forest-50 text-forest-800 font-serif font-bold text-xs flex items-center justify-center mx-auto mb-3">
                 0{idx + 1}
               </span>
@@ -113,7 +113,7 @@ export const BulkOrdersPage = () => {
         {/* Form & Contact Details Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Form (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-cream-200 p-6 sm:p-10 shadow-soft">
+          <div className="lg:col-span-7 card p-6 sm:p-10">
             <h2 className="font-serif text-2xl font-bold text-forest-950 mb-2">Request Wholesale Quote</h2>
             <p className="text-xs text-stone-500 mb-6">Complete the specifications below for tier pricing and sample packets.</p>
 
@@ -254,17 +254,17 @@ export const BulkOrdersPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                  className="btn-primary w-full sm:w-auto px-8 py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2"
                 >
                   <Send className="w-4 h-4" />
                   <span>{loading ? 'SUBMITTING...' : 'REQUEST QUOTE'}</span>
                 </button>
 
                 <a
-                  href={`https://wa.me/919876543210?text=${whatsappMessage}`}
+                  href={`https://wa.me/919573636998?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+                  className="btn bg-emerald-700 hover:bg-emerald-600 text-white w-full sm:w-auto px-6 py-3.5 uppercase tracking-widest text-xs flex items-center justify-center gap-2"
                 >
                   <MessageCircle className="w-4 h-4 fill-current" />
                   <span>CHAT ON WHATSAPP</span>
@@ -300,7 +300,7 @@ export const BulkOrdersPage = () => {
             <div className="bg-white rounded-3xl border border-cream-200 p-6 shadow-soft space-y-3 text-xs text-stone-600">
               <h4 className="font-serif font-bold text-base text-forest-950">Corporate Sales Desk</h4>
               <p>Email: <a href="mailto:bulk@vruksha.in" className="text-forest-800 font-bold underline">bulk@vruksha.in</a></p>
-              <p>Direct B2B Hotline: <a href="tel:+919876543210" className="text-forest-800 font-bold">+91 98765 43210</a></p>
+              <p>Direct B2B Hotline: <a href="tel:+919573636998" className="text-forest-800 font-bold">+91 95736 36998</a></p>
               <p className="text-[11px] text-stone-400">Desk Hours: Mon - Sat, 9:00 AM - 7:00 PM IST</p>
             </div>
           </div>

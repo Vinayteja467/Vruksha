@@ -124,7 +124,7 @@ export const CheckoutPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Title */}
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-bold text-forest-950">Express Checkout</h1>
@@ -136,7 +136,7 @@ export const CheckoutPage = () => {
             {/* Left Column: Form Fields (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               {/* SECTION 1: Contact Information */}
-              <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-4">
+              <div className="card p-6 sm:p-8 space-y-4">
                 <h3 className="font-serif font-bold text-lg text-forest-950 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-forest-800 text-cream-50 text-xs flex items-center justify-center font-sans">
                     1
@@ -390,7 +390,7 @@ export const CheckoutPage = () => {
             </div>
 
             {/* Right Column: Order Summary (5 cols) */}
-            <div className="lg:col-span-5 bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-6 sticky top-28">
+            <div className="lg:col-span-5 card p-6 sm:p-8 space-y-6 sticky top-28">
               <h3 className="font-serif font-bold text-xl text-forest-950 pb-3 border-b border-cream-100">
                 Order Summary ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
               </h3>
@@ -457,7 +457,7 @@ export const CheckoutPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:shadow-lg disabled:opacity-50"
+                className="btn-primary w-full py-4 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2"
               >
                 <Lock className="w-4 h-4" />
                 <span>{loading ? 'PROCESSING ORDER...' : `PLACE ORDER (${formatPrice(finalTotal)})`}</span>

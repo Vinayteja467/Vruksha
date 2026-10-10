@@ -26,8 +26,8 @@ export const WhyPureHarvest = () => {
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-cream-100/60 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section bg-cream-100/60 overflow-hidden">
+      <div className="container-x">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Visual Editorial Frame */}
           <div className="lg:col-span-5 relative">
@@ -59,7 +59,7 @@ export const WhyPureHarvest = () => {
           {/* Right Editorial Copy */}
           <div className="lg:col-span-7 space-y-8">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-forest-700">
+              <span className="eyebrow">
                 The VRUKSHA Standard
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-forest-950 mt-2 mb-4 leading-tight">
@@ -75,7 +75,7 @@ export const WhyPureHarvest = () => {
               {pillars.map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="bg-white p-5 rounded-2xl border border-cream-200 shadow-soft">
+                  <div key={idx} className="card card-hover p-5">
                     <div className="w-10 h-10 rounded-xl bg-forest-50 border border-forest-100 flex items-center justify-center text-forest-800 mb-3">
                       <Icon className="w-5 h-5" />
                     </div>

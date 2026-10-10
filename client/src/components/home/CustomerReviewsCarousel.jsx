@@ -54,11 +54,11 @@ export const CustomerReviewsCarousel = ({ reviews = [] }) => {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-white border-b border-cream-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section bg-white border-b border-cream-200">
+      <div className="container-x">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-700 mb-2">
+            <div className="eyebrow mb-2">
               <CheckCircle2 className="w-4 h-4" />
               <span>Based on verified purchases</span>
             </div>
@@ -96,8 +96,8 @@ export const CustomerReviewsCarousel = ({ reviews = [] }) => {
           {reviewList.map((item, idx) => (
             <div
               key={item.id || idx}
-              className={`bg-cream-50 rounded-2xl p-6 border border-cream-200 shadow-soft flex flex-col justify-between transition-all duration-300 ${
-                idx === currentIndex ? 'ring-2 ring-forest-700' : ''
+              className={`card p-6 flex flex-col justify-between transition-all duration-300 ${
+                idx === currentIndex ? 'ring-2 ring-forest-700 shadow-elevated' : ''
               }`}
             >
               <div>

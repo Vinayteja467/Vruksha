@@ -50,24 +50,43 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'soft': '0 4px 20px -2px rgba(21, 46, 34, 0.06)',
-        'elevated': '0 12px 36px -4px rgba(21, 46, 34, 0.1)',
-        'premium': '0 20px 48px -8px rgba(21, 46, 34, 0.14)',
+        soft: '0 4px 20px -2px rgba(21, 46, 34, 0.06)',
+        elevated: '0 12px 36px -4px rgba(21, 46, 34, 0.10)',
+        premium: '0 20px 48px -8px rgba(21, 46, 34, 0.14)',
+        glow: '0 10px 30px -6px rgba(46, 105, 77, 0.45)',
+        inset: 'inset 0 1px 0 rgba(255,255,255,0.6)',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translate3d(0,0,0)' },
+          '50%': { transform: 'translate3d(0,-12px,0)' },
+        },
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.75' },
+        },
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translate3d(0,16px,0)' },
+          '100%': { opacity: '1', transform: 'translate3d(0,0,0)' },
+        },
+        marquee: {
+          '0%': { transform: 'translate3d(0,0,0)' },
+          '100%': { transform: 'translate3d(-50%,0,0)' },
+        },
       },
       animation: {
         'float-slow': 'float 6s ease-in-out infinite',
         'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
+        'fade-up': 'fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both',
+        marquee: 'marquee 30s linear infinite',
       },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        pulseSubtle: {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: 0.85 },
-        }
-      }
     },
   },
   plugins: [],

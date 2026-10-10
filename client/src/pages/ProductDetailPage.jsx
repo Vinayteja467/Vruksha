@@ -173,7 +173,7 @@ export const ProductDetailPage = () => {
 
   return (
     <div className="bg-cream-50/40 min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs font-medium text-stone-500 mb-8 overflow-x-auto whitespace-nowrap">
           <Link to="/" className="hover:text-forest-800">Home</Link>
@@ -186,26 +186,26 @@ export const ProductDetailPage = () => {
         </nav>
 
         {/* Main Product Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 bg-white rounded-3xl border border-cream-200 p-6 sm:p-10 shadow-soft mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 card p-6 sm:p-10 mb-16">
           {/* Left Column: Image Gallery with Thumbnails (6 cols) */}
           <div className="lg:col-span-6 space-y-4">
             {/* Main Featured Image with Zoom */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-cream-100 border border-cream-200 group">
+            <div className="relative aspect-square rounded-2xl zoom-wrap bg-cream-100 border border-cream-200 group">
               <img
                 src={product.images?.[selectedImgIndex] || product.images?.[0]}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-zoom-in"
+                className="w-full h-full object-cover cursor-zoom-in"
               />
 
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 {discountPercent > 0 && (
-                  <span className="bg-forest-900 text-cream-50 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
+                  <span className="badge bg-forest-900 text-cream-50 font-bold ring-0">
                     {discountPercent}% OFF
                   </span>
                 )}
                 {product.bestSeller && (
-                  <span className="bg-amber-600 text-white text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+                  <span className="badge bg-earth-500 text-white font-bold ring-0">
                     Best Seller
                   </span>
                 )}
@@ -345,7 +345,7 @@ export const ProductDetailPage = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="flex-1 py-4 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:shadow-lg"
+                  className="btn-primary flex-1 py-4 text-xs uppercase tracking-widest shadow-glow flex items-center justify-center gap-2"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>ADD TO CART</span>
@@ -356,7 +356,7 @@ export const ProductDetailPage = () => {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full py-3.5 bg-earth-600 hover:bg-earth-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-sm flex items-center justify-center gap-2 transition-colors"
+                className="btn-accent w-full py-3.5 text-xs uppercase tracking-widest shadow-elevated flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4 fill-current" />
                 <span>BUY NOW WITH 1-CLICK</span>
@@ -557,7 +557,7 @@ export const ProductDetailPage = () => {
                         value={reviewTitle}
                         onChange={(e) => setReviewTitle(e.target.value)}
                         placeholder="Enter review headline"
-                        className="w-full text-xs p-2.5 rounded-lg border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                        className="input text-xs py-2.5"
                       />
                     </div>
 
@@ -569,14 +569,14 @@ export const ProductDetailPage = () => {
                         onChange={(e) => setReviewComment(e.target.value)}
                         placeholder="Tell others how you use this product in your cooking or wellness routine..."
                         required
-                        className="w-full text-xs p-2.5 rounded-lg border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                        className="input text-xs py-2.5 resize-none"
                       />
                     </div>
 
                     <button
                       type="submit"
                       disabled={submittingReview}
-                      className="px-6 py-2.5 bg-forest-800 hover:bg-forest-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors shadow-sm"
+                      className="btn-primary px-6 py-2.5 text-xs font-bold uppercase tracking-wider"
                     >
                       {submittingReview ? 'Submitting...' : 'Submit Verified Review'}
                     </button>

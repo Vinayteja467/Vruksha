@@ -17,12 +17,12 @@ export const NewsletterSection = () => {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-forest-900 text-cream-50 relative overflow-hidden">
+    <section className="section bg-forest-900 text-cream-50 relative overflow-hidden">
       {/* Decorative leaf blur */}
       <div className="absolute top-0 right-1/4 w-72 h-72 rounded-full bg-forest-800/60 blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-800 text-forest-300 text-xs font-semibold uppercase tracking-wider">
+        <div className="badge bg-forest-800 text-forest-300 ring-0 gap-1.5 py-1.5 px-3.5">
           <Sparkles className="w-3.5 h-3.5 text-earth-400" />
           <span>Special Welcome Offer</span>
         </div>
@@ -50,7 +50,7 @@ export const NewsletterSection = () => {
 
           <button
             type="submit"
-            className="w-full sm:w-auto px-6 py-3.5 bg-earth-600 hover:bg-earth-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex-shrink-0 transition-all hover:shadow-lg"
+            className="btn-accent w-full sm:w-auto px-6 py-3.5 uppercase tracking-widest text-xs flex-shrink-0"
           >
             GET MY DISCOUNT
           </button>

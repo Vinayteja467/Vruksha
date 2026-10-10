@@ -37,7 +37,7 @@ export const ProductFilters = ({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by name or ingredient..."
-            className="w-full text-xs p-2.5 pl-8 rounded-xl border border-cream-300 focus:outline-none focus:border-forest-600 bg-white"
+            className="input pl-8 text-xs py-2.5"
           />
           <Search className="w-4 h-4 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
           {searchQuery && (
@@ -200,7 +200,7 @@ export const ProductFilters = ({
   return (
     <>
       {/* Desktop Filter Sidebar */}
-      <aside className="hidden lg:block w-64 flex-shrink-0 bg-white p-5 rounded-2xl border border-cream-200 shadow-soft h-fit sticky top-28">
+      <aside className="hidden lg:block w-64 flex-shrink-0 card p-5 h-fit sticky top-28">
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-cream-200">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-forest-700" />

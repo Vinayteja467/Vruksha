@@ -30,10 +30,10 @@ export const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-white border-b border-cream-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section bg-white border-b border-cream-200">
+      <div className="container-x">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-forest-700">
+          <span className="eyebrow">
             Simple & Transparent
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950 mt-2 mb-4">
@@ -55,10 +55,10 @@ export const HowItWorks = () => {
               return (
                 <div
                   key={idx}
-                  className="bg-cream-50 rounded-2xl p-6 border border-cream-200 shadow-soft hover:shadow-elevated transition-all flex flex-col items-center text-center group"
+                  className="card card-hover p-6 flex flex-col items-center text-center group"
                 >
                   {/* Step Badge */}
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-forest-600 bg-white px-3 py-1 rounded-full border border-cream-200 mb-4 shadow-2xs">
+                  <span className="badge mb-4">
                     Step {step.num}
                   </span>
 

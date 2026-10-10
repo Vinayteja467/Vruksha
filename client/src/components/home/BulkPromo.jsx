@@ -13,11 +13,11 @@ export const BulkPromo = () => {
     'Private-Label Businesses'
   ];
 
-  const whatsappUrl = 'https://wa.me/919876543210?text=Hello%20VRUKSHA%20Team%2C%20I%20am%20interested%20in%20bulk%20and%20wholesale%20product%20orders.';
+  const whatsappUrl = 'https://wa.me/919573636998?text=Hello%20VRUKSHA%20Team%2C%20I%20am%20interested%20in%20bulk%20and%20wholesale%20product%20orders.';
 
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-br from-cream-100/90 via-cream-50 to-cream-100/60 border-b border-cream-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section bg-gradient-to-br from-cream-100/90 via-cream-50 to-cream-100/60 border-b border-cream-200">
+      <div className="container-x">
         <div className="bg-forest-950 text-cream-100 rounded-3xl p-8 sm:p-12 lg:p-16 border border-forest-900 shadow-premium overflow-hidden relative">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-forest-800/30 blur-3xl pointer-events-none" />
@@ -25,7 +25,7 @@ export const BulkPromo = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
             {/* Left Content (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-800/80 border border-forest-700 text-forest-300 text-xs font-semibold uppercase tracking-wider">
+              <div className="badge bg-forest-800/80 text-forest-300 ring-0 gap-2 mb-1">
                 <Building2 className="w-3.5 h-3.5" />
                 <span>B2B Wholesale & Supply</span>
               </div>
@@ -59,7 +59,7 @@ export const BulkPromo = () => {
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-4">
                 <Link
                   to="/bulk-orders"
-                  className="w-full sm:w-auto px-7 py-4 bg-earth-600 hover:bg-earth-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center justify-center gap-2 transition-all group"
+                  className="btn-accent w-full sm:w-auto px-7 py-4 text-xs uppercase tracking-widest flex items-center justify-center gap-2 group"
                 >
                   <span>REQUEST BULK QUOTE</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -69,7 +69,7 @@ export const BulkPromo = () => {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full sm:w-auto px-7 py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
+                  className="btn bg-emerald-700 hover:bg-emerald-600 text-white w-full sm:w-auto px-7 py-4 text-xs uppercase tracking-widest flex items-center justify-center gap-2"
                 >
                   <MessageCircle className="w-4 h-4 fill-current" />
                   <span>CHAT ON WHATSAPP</span>

@@ -27,7 +27,7 @@ export const TrustBar = () => {
 
   return (
     <section className="bg-white border-y border-cream-200 py-8 lg:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {points.map((pt, idx) => {
             const Icon = pt.icon;

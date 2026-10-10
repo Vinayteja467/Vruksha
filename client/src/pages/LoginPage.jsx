@@ -26,7 +26,7 @@ export const LoginPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-cream-200 p-8 sm:p-10 shadow-soft space-y-6">
+      <div className="max-w-md w-full card p-8 sm:p-10 space-y-6">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2.5 mb-2">
             <img src="/logo.png" alt="VRUKSHA" className="w-10 h-10 rounded-full object-cover shadow-xs" />
@@ -50,7 +50,7 @@ export const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 required
-                className="w-full text-xs pl-10 pr-3 py-3 rounded-xl border border-cream-300 focus:outline-none focus:border-forest-600 bg-white"
+                className="input pl-10 pr-3 text-xs py-3"
               />
             </div>
           </div>
@@ -72,7 +72,7 @@ export const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-                className="w-full text-xs pl-10 pr-3 py-3 rounded-xl border border-cream-300 focus:outline-none focus:border-forest-600 bg-white"
+                className="input pl-10 pr-3 text-xs py-3"
               />
             </div>
           </div>
@@ -80,7 +80,7 @@ export const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+            className="btn-primary w-full py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
           >
             <span>{loading ? 'SIGNING IN...' : 'SIGN IN'}</span>
             <ArrowRight className="w-4 h-4" />

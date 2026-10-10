@@ -206,11 +206,11 @@ export const CartDrawer = () => {
                         value={couponInput}
                         onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                         placeholder="Enter coupon code (e.g. VRUKSHA10)"
-                        className="flex-1 text-xs px-3 py-2 rounded-xl border border-cream-300 bg-white focus:outline-none focus:border-forest-600 uppercase"
+                        className="input flex-1 text-xs py-2 uppercase"
                       />
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-white text-xs font-semibold uppercase tracking-wider rounded-xl transition-colors"
+                        className="btn-primary px-4 py-2 text-xs uppercase"
                       >
                         Apply
                       </button>
@@ -250,7 +250,7 @@ export const CartDrawer = () => {
                     <button
                       type="button"
                       onClick={handleCheckout}
-                      className="w-full py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
+                      className="btn-primary w-full py-3.5 shadow-glow uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                     >
                       <span>Proceed to Checkout</span>
                       <ArrowRight className="w-4 h-4" />

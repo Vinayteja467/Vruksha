@@ -4,10 +4,10 @@ import { ArrowRight } from 'lucide-react';
 
 export const CategoryShowcase = ({ categories = [] }) => {
   return (
-    <section className="py-16 lg:py-24 bg-cream-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section bg-cream-50">
+      <div className="container-x">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-forest-700">
+          <span className="eyebrow">
             Botanical Categories
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950 mt-2 mb-4">
@@ -22,13 +22,13 @@ export const CategoryShowcase = ({ categories = [] }) => {
           {categories.map((cat) => (
             <div
               key={cat.id || cat.slug}
-              className="group relative bg-white rounded-2xl border border-cream-200 overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300 flex flex-col justify-between"
+              className="group relative card card-hover flex flex-col justify-between overflow-hidden"
             >
-              <div className="relative aspect-[4/3] overflow-hidden bg-cream-200">
+              <div className="relative aspect-[4/3] zoom-wrap bg-cream-200">
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-forest-950/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
               </div>

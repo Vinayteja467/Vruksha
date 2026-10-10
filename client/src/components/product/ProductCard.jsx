@@ -49,26 +49,26 @@ export const ProductCard = ({ product }) => {
       transition={{ duration: 0.3 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white rounded-2xl border border-cream-200 overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300 flex flex-col h-full"
+      className="group relative card card-hover flex flex-col h-full overflow-hidden"
     >
       {/* Image Container with Badges */}
-      <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-cream-100">
+      <Link to={`/product/${product.slug}`} className="relative block aspect-square zoom-wrap bg-cream-100">
         <img
           src={product.images?.[0] || 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&w=800&q=80'}
           alt={product.name}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+          className="w-full h-full object-cover object-center"
           loading="lazy"
         />
 
         {/* Discount / Best Seller Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
           {discountPercent > 0 && (
-            <span className="bg-forest-900 text-cream-50 text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+            <span className="badge bg-forest-900 text-cream-50 font-bold ring-0">
               {discountPercent}% OFF
             </span>
           )}
           {product.bestSeller && (
-            <span className="bg-amber-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
+            <span className="badge bg-earth-500 text-white font-bold ring-0">
               Best Seller
             </span>
           )}
@@ -93,7 +93,7 @@ export const ProductCard = ({ product }) => {
           <button
             type="button"
             onClick={handleQuickAdd}
-            className="w-full py-2.5 bg-forest-900/95 hover:bg-forest-900 text-cream-50 font-semibold text-xs tracking-wider uppercase rounded-xl shadow-lg flex items-center justify-center gap-2 backdrop-blur-sm transition-colors"
+            className="w-full btn btn-primary py-2.5 text-xs tracking-wider uppercase shadow-glow"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Quick Add ({selectedSize})</span>

@@ -45,10 +45,10 @@ export const FAQAccordion = () => {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-cream-50 border-b border-cream-200">
+    <section className="section bg-cream-50 border-b border-cream-200">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-forest-700 mb-2">
+          <div className="eyebrow mb-2">
             <HelpCircle className="w-4 h-4" />
             <span>Got Questions?</span>
           </div>

@@ -44,19 +44,19 @@ export const ProductSpotlight = ({ product }) => {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-white border-b border-cream-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-cream-100/90 via-cream-50 to-white rounded-3xl border border-cream-200 p-6 sm:p-10 lg:p-16 shadow-soft">
+    <section className="section bg-white border-b border-cream-200">
+      <div className="container-x">
+        <div className="card p-6 sm:p-10 lg:p-16 bg-gradient-to-br from-cream-100/90 via-cream-50 to-white">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             {/* Left: Product Image */}
             <div className="lg:col-span-6 relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-elevated bg-white border border-cream-200 aspect-square">
+              <div className="relative rounded-2xl overflow-hidden shadow-elevated bg-white border border-cream-200 aspect-square zoom-wrap">
                 <img
                   src={spotlightProd.images?.[0]}
                   alt={spotlightProd.name}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-4 left-4 bg-forest-900 text-cream-50 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                <div className="absolute top-4 left-4 badge bg-forest-900 text-cream-50 font-bold ring-0">
                   Product Spotlight
                 </div>
               </div>
@@ -152,14 +152,14 @@ export const ProductSpotlight = ({ product }) => {
                   <button
                     type="button"
                     onClick={handleAdd}
-                    className="flex-1 sm:flex-initial px-6 py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-wider rounded-xl shadow-md flex items-center justify-center gap-2 transition-all"
+                    className="btn-primary flex-1 sm:flex-initial px-6 py-3.5 shadow-glow uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     <span>Add to Cart</span>
                   </button>
                   <Link
                     to={`/product/${spotlightProd.slug}`}
-                    className="px-4 py-3.5 bg-white hover:bg-cream-100 text-forest-900 font-bold text-xs uppercase tracking-wider rounded-xl border border-cream-300 transition-all flex items-center gap-1.5"
+                    className="btn-secondary px-5 py-3.5 uppercase tracking-wider text-xs flex items-center gap-1.5"
                   >
                     <span>Details</span>
                     <ArrowRight className="w-3.5 h-3.5" />

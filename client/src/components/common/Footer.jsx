@@ -19,7 +19,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-forest-950 text-cream-100 pt-16 pb-8 border-t border-forest-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b border-forest-900">
           {/* Column 1: Brand Info (Spans 2 cols on lg) */}

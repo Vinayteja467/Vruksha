@@ -43,7 +43,7 @@ export const CategoryPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Breadcrumb / Back Link */}
         <Link
           to="/shop"
@@ -54,9 +54,9 @@ export const CategoryPage = () => {
         </Link>
 
         {/* Category Header Banner */}
-        <div className="bg-white rounded-3xl border border-cream-200 p-8 sm:p-12 mb-10 shadow-soft relative overflow-hidden">
+        <div className="card p-8 sm:p-12 mb-10 relative overflow-hidden">
           <div className="max-w-2xl relative z-10">
-            <span className="text-xs font-bold uppercase tracking-widest text-forest-700">
+            <span className="eyebrow">
               Botanical Category
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-forest-950 capitalize mt-2 mb-3">

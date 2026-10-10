@@ -102,12 +102,12 @@ export const ShopPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Page Header */}
         <div className="border-b border-cream-200 pb-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-forest-700">
+              <span className="eyebrow">
                 Pure Indian Produce
               </span>
               <h1 className="font-serif text-3xl sm:text-4xl font-bold text-forest-950 mt-1">

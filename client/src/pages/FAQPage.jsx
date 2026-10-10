@@ -35,7 +35,7 @@ export const FAQPage = () => {
               Contact Support
             </Link>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919573636998"
               target="_blank"
               rel="noreferrer"
               className="px-6 py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-500 transition-colors flex items-center gap-1.5"

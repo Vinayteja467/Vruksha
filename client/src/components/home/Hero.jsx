@@ -1,156 +1,146 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, ShieldCheck, Leaf, Star } from 'lucide-react';
-import { formatPrice } from '../../utils/formatters';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Leaf } from 'lucide-react';
 
 export const Hero = () => {
+  const prefersReducedMotion = useReducedMotion();
+
+  /* ── animation variants ── */
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: prefersReducedMotion ? 0 : 0.1,
+        delayChildren: prefersReducedMotion ? 0 : 0.15,
+      },
+    },
+  };
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: prefersReducedMotion ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-cream-100/70 via-cream-50 to-white pt-8 pb-16 lg:pt-16 lg:pb-24">
-      {/* Decorative background radial leaves */}
-      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-forest-100/40 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-cream-300/40 blur-2xl pointer-events-none" />
+    <section className="relative w-full min-h-[85svh] md:min-h-[100svh] flex items-center overflow-hidden bg-[#FAF8F5]">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left Column: Copy & Actions (7 cols) */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest-100/80 border border-forest-200 text-forest-900 text-xs font-semibold uppercase tracking-wider"
+      {/* ─── BACKGROUND IMAGE  (z-0) ─── */}
+      <picture className="absolute inset-0 z-0 pointer-events-none select-none">
+        <source media="(max-width: 767px)" srcSet="/hero-bg-mobile.webp" />
+        <motion.img
+          src="/hero-bg.webp"
+          alt=""
+          role="presentation"
+          width="1920"
+          height="871"
+          fetchPriority="high"
+          decoding="async"
+          initial={prefersReducedMotion ? false : { scale: 1.08 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.6, ease: 'easeOut' }}
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center] md:object-[right_center]"
+        />
+      </picture>
+
+      {/* ─── READABILITY OVERLAY  (z-[1]) ─── */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-[1] pointer-events-none
+          bg-gradient-to-b from-[#FAF8F5]/90 via-[#FAF8F5]/75 to-[#FAF8F5]/40
+          md:bg-gradient-to-r md:from-[#FAF8F5]/95 md:via-[#FAF8F5]/70 md:to-transparent"
+      />
+
+      {/* ─── BOTTOM FADE STRIP  (z-[2]) ─── */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 inset-x-0 h-[120px] z-[2] pointer-events-none
+          bg-gradient-to-t from-[#FAF8F5] to-transparent"
+      />
+
+      {/* ─── TEXT CONTENT  (z-10) ─── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16 md:py-24">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          className="max-w-2xl space-y-6 md:space-y-7"
+        >
+          {/* 1 ▸ Eyebrow */}
+          <motion.p variants={fadeUp} className="flex items-center gap-2">
+            <Leaf className="w-3.5 h-3.5 text-forest-700 shrink-0" />
+            <span className="uppercase text-xs tracking-[0.2em] text-forest-700 font-bold">
+              Rooted in Nature. Crafted with Care.
+            </span>
+          </motion.p>
+
+          {/* 2 ▸ Headline */}
+          <motion.h1
+            variants={fadeUp}
+            style={{ fontSize: 'clamp(2.5rem, 5vw + 1rem, 5rem)', textWrap: 'balance' }}
+            className="font-serif font-bold leading-[1.05] tracking-tight text-[#152E22]"
+          >
+            Pure Ingredients.{' '}
+            <span className="block sm:inline">Straight From Nature.</span>
+            <span className="block italic text-[#B08D4A] font-semibold mt-1">
+              Made for Everyday Wellness.
+            </span>
+          </motion.h1>
+
+          {/* 3 ▸ Sub-text */}
+          <motion.p
+            variants={fadeUp}
+            className="text-base sm:text-lg text-forest-900/80 max-w-xl leading-relaxed"
+          >
+            Real ingredients. Naturally sourced. Carefully processed. Nothing unnecessary.
+          </motion.p>
+
+          {/* 4 ▸ Buttons */}
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-1"
+          >
+            <Link
+              to="/shop"
+              className="rounded-full bg-forest-600 hover:bg-forest-700 text-white font-medium
+                px-8 py-4 text-sm shadow-glow
+                flex items-center justify-center gap-2.5 group
+                transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-forest-500/40"
             >
-              <Leaf className="w-3.5 h-3.5 text-forest-600" />
-              <span>100% Farm-Sourced Indian Products</span>
-            </motion.div>
+              Explore Our Powders
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-forest-950 leading-[1.12]"
+            <Link
+              to="/category/raw-powders"
+              className="rounded-full bg-white/70 hover:bg-white text-forest-900
+                border border-forest-700/30 font-medium
+                px-8 py-4 text-sm backdrop-blur-sm
+                flex items-center justify-center gap-2
+                transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-forest-500/30"
             >
-              Pure ingredients for everyday living.
-            </motion.h1>
+              Explore Products
+            </Link>
+          </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-base sm:text-lg text-stone-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal"
-            >
-              Discover naturally sourced fruit, vegetable and leafy products made for simple, wholesome everyday use. Gently dehydrated to protect natural colors, flavors, and plant nutrients.
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2"
-            >
-              <Link
-                to="/shop"
-                className="w-full sm:w-auto px-8 py-4 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-elevated hover:shadow-premium transition-all duration-300 flex items-center justify-center gap-2 group"
-              >
-                <span>SHOP NOW</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/category/popular-combos"
-                className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-cream-100 text-forest-950 font-bold text-xs uppercase tracking-widest rounded-xl border border-cream-300 shadow-soft transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <span>EXPLORE PRODUCTS</span>
-              </Link>
-            </motion.div>
-
-            {/* Micro Highlights */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="pt-4 flex items-center justify-center lg:justify-start gap-8 text-xs text-stone-600 font-medium"
-            >
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-forest-600" />
-                <span>Zero Preservatives</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-forest-600" />
-                <span>No Artificial Colors</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-forest-600" />
-                <span>Non-GMO & Vegan</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Column: Hero Visual with Floating Cards (5 cols) */}
-          <div className="lg:col-span-5 relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="relative mx-auto max-w-md lg:max-w-none"
-            >
-              {/* Main Circular/Pill Frame */}
-              <div className="relative rounded-3xl overflow-hidden shadow-premium border-4 border-white bg-cream-200 aspect-[4/5]">
-                <img
-                  src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&w=1200&q=80"
-                  alt="VRUKSHA Natural Products"
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-forest-950/60 via-transparent to-transparent" />
-                
-                {/* Floating Tag inside image */}
-                <div className="absolute bottom-5 left-5 right-5 text-cream-50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-cream-300">Origin Story</span>
-                  <p className="font-serif text-lg font-bold leading-tight">Shade-dried & cold-pulverized for optimal freshness</p>
-                </div>
-              </div>
-
-              {/* Floating Element 1: Top Right Product Badge */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -top-4 -right-4 sm:-right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-elevated border border-cream-200 flex items-center gap-3 z-20"
-              >
-                <div className="w-10 h-10 rounded-xl bg-forest-100 flex items-center justify-center text-forest-800">
-                  <Sparkles className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <div className="flex items-center text-amber-500">
-                    <Star className="w-3.5 h-3.5 fill-current" />
-                    <span className="text-xs font-bold text-forest-950 ml-1">4.9 / 5</span>
-                  </div>
-                  <p className="text-[11px] text-stone-500 font-medium">1,200+ Verified Buyers</p>
-                </div>
-              </motion.div>
-
-              {/* Floating Element 2: Bottom Left Mini Product Card */}
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="absolute -bottom-6 -left-4 sm:-left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-elevated border border-cream-200 flex items-center gap-3 z-20 max-w-[240px]"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=300&q=80"
-                  alt="Moringa Powder"
-                  className="w-12 h-12 rounded-xl object-cover"
-                />
-                <div>
-                  <p className="text-xs font-bold text-forest-950 truncate">Moringa Powder</p>
-                  <p className="text-[11px] font-semibold text-forest-700">{formatPrice(229)}</p>
-                  <span className="text-[9px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">
-                    High Chlorophyll
-                  </span>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
+          {/* 5 ▸ Trust row */}
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs sm:text-sm text-forest-900/80 font-medium pt-2"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-forest-600 shrink-0" />
+            <span>Zero Preservatives</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-forest-600 shrink-0 ml-2" />
+            <span>No Artificial Colors</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-forest-600 shrink-0 ml-2" />
+            <span>Non-GMO &amp; Vegan</span>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

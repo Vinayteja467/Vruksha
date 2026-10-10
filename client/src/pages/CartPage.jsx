@@ -77,7 +77,7 @@ export const CartPage = () => {
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-8 sm:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-x">
         {/* Title */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-cream-200">
           <div>
@@ -105,7 +105,7 @@ export const CartPage = () => {
         {/* Cart Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
           {/* Left Table / List (8 cols) */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-cream-200 p-6 shadow-soft divide-y divide-cream-100">
+          <div className="lg:col-span-8 card p-6 divide-y divide-cream-100">
             {cartItems.map((item) => (
               <div
                 key={`${item.product}-${item.size}`}
@@ -213,11 +213,11 @@ export const CartPage = () => {
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                     placeholder="Enter coupon code (e.g. VRUKSHA10)"
-                    className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-cream-300 uppercase bg-cream-50 focus:outline-none focus:border-forest-600"
+                    className="input flex-1 text-xs py-2.5 uppercase"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2.5 bg-forest-900 hover:bg-forest-800 text-cream-50 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors"
+                    className="btn-primary px-4 py-2.5 text-xs uppercase"
                   >
                     Apply
                   </button>
@@ -258,7 +258,7 @@ export const CartPage = () => {
               <button
                 type="button"
                 onClick={() => navigate('/checkout')}
-                className="w-full py-4 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:shadow-lg"
+                className="btn-primary w-full py-4 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2"
               >
                 <span>PROCEED TO CHECKOUT</span>
                 <ArrowRight className="w-4 h-4" />

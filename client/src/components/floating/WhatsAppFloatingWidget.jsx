@@ -10,7 +10,7 @@ export const WhatsAppFloatingWidget = ({ productName = '', productSlug = '' }) =
   const isBulkPage = location.pathname.includes('/bulk-orders');
   const isProductPage = location.pathname.includes('/product/');
 
-  const defaultNumber = '919876543210'; // WhatsApp number
+  const defaultNumber = '919573636998'; // Official WhatsApp contact number
 
   const buildUrl = (text) => {
     return `https://wa.me/${defaultNumber}?text=${encodeURIComponent(text)}`;

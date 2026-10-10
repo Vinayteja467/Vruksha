@@ -22,14 +22,14 @@ export const ContactPage = () => {
     addToast('Thank you! Your message has been sent to our customer care team.', 'success');
   };
 
-  const whatsappUrl = 'https://wa.me/919876543210?text=Hello%20VRUKSHA%20Customer%20Support%2C%20I%20have%20an%20inquiry.';
+  const whatsappUrl = 'https://wa.me/919573636998?text=Hello%20VRUKSHA%20Customer%20Support%2C%20I%20have%20an%20inquiry.';
 
   return (
     <div className="bg-cream-50/50 min-h-screen py-10 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="container-x space-y-12">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-forest-700 bg-forest-100 px-3 py-1 rounded-full border border-forest-200">
+          <span className="eyebrow">
             Get In Touch
           </span>
           <h1 className="font-serif text-3xl sm:text-5xl font-bold text-forest-950 mt-2 mb-3">
@@ -42,7 +42,7 @@ export const ContactPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Form (7 cols) */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-cream-200 p-6 sm:p-10 shadow-soft">
+          <div className="lg:col-span-7 card p-6 sm:p-10">
             <h2 className="font-serif text-2xl font-bold text-forest-950 mb-2">Send us a message</h2>
             <p className="text-xs text-stone-500 mb-6">Our customer care desk typically responds within 3 hours.</p>
 
@@ -57,7 +57,7 @@ export const ContactPage = () => {
                     setSubmitted(false);
                     setFormData({ name: '', email: '', phone: '', message: '' });
                   }}
-                  className="px-4 py-2 bg-forest-800 text-white rounded-xl text-xs font-bold"
+                  className="btn-primary px-4 py-2 text-xs font-bold"
                 >
                   Send another message
                 </button>
@@ -75,7 +75,7 @@ export const ContactPage = () => {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Enter your full name"
-                      className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                      className="input text-xs py-3"
                     />
                   </div>
                   <div>
@@ -88,7 +88,7 @@ export const ContactPage = () => {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="Enter your email address"
-                      className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                      className="input text-xs py-3"
                     />
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export const ContactPage = () => {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="Enter your 10-digit mobile number"
-                    className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                    className="input text-xs py-3"
                   />
                 </div>
 
@@ -116,14 +116,14 @@ export const ContactPage = () => {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Enter your message or inquiry..."
-                    className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white focus:outline-none focus:border-forest-600"
+                    className="input text-xs py-3 resize-none"
                   />
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row items-center gap-4">
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 py-3.5 bg-forest-900 hover:bg-forest-800 text-cream-50 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                    className="btn-primary w-full sm:w-auto px-8 py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     <span>Send Message</span>
@@ -167,8 +167,8 @@ export const ContactPage = () => {
                   </div>
                   <div>
                     <span className="font-bold text-forest-950 block">Direct Line</span>
-                    <a href="tel:+919876543210" className="text-stone-600 hover:text-forest-800">
-                      +91 98765 43210
+                    <a href="tel:+919573636998" className="text-stone-600 hover:text-forest-800">
+                      +91 95736 36998
                     </a>
                   </div>
                 </div>

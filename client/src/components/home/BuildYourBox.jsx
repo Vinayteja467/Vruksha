@@ -71,11 +71,11 @@ export const BuildYourBox = ({ products = [] }) => {
   };
 
   return (
-    <section id="build-a-box" className="py-16 lg:py-24 bg-forest-950 text-cream-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="build-a-box" className="section bg-forest-950 text-cream-100">
+      <div className="container-x">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest-800 text-forest-300 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="badge bg-forest-800 text-forest-300 ring-0 gap-2 mb-3">
             <Sparkles className="w-3.5 h-3.5 text-earth-400" />
             <span>Interactive Custom Bundle</span>
           </div>
