@@ -53,26 +53,26 @@ export const CartDrawer = () => {
             className="fixed inset-0 bg-forest-950/60 backdrop-blur-xs transition-opacity"
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+          <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between"
+              className="w-full max-w-md bg-white shadow-2xl flex flex-col justify-between"
             >
               {/* Drawer Header */}
-              <div className="p-5 border-b border-cream-200 flex items-center justify-between bg-cream-50/80">
+              <div className="p-4 sm:p-5 border-b border-cream-200 flex items-center justify-between bg-cream-50/80">
                 <div className="flex items-center gap-2.5">
                   <ShoppingBag className="w-5 h-5 text-forest-800" />
-                  <h2 className="font-serif font-bold text-lg text-forest-950">
+                  <h2 className="font-serif font-bold text-base sm:text-lg text-forest-950">
                     Your Basket ({cartItems.reduce((acc, item) => acc + item.quantity, 0)})
                   </h2>
                 </div>
                 <button
                   type="button"
                   onClick={closeDrawer}
-                  className="p-1.5 rounded-full text-stone-400 hover:text-stone-700 hover:bg-cream-200 transition-colors"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-cream-200 transition-colors"
                   aria-label="Close cart drawer"
                 >
                   <X className="w-5 h-5" />

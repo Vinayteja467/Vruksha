@@ -82,8 +82,8 @@ export const Hero = () => {
           {/* 2 ▸ Headline */}
           <motion.h1
             variants={fadeUp}
-            style={{ fontSize: 'clamp(2.5rem, 5vw + 1rem, 5rem)', textWrap: 'balance' }}
-            className="font-serif font-bold leading-[1.05] tracking-tight text-[#152E22]"
+            style={{ fontSize: 'clamp(1.9rem, 4.5vw + 0.75rem, 4.75rem)', textWrap: 'balance' }}
+            className="font-serif font-bold leading-[1.08] tracking-tight text-[#152E22]"
           >
             Pure Ingredients.{' '}
             <span className="block sm:inline">Straight From Nature.</span>

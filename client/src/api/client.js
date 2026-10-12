@@ -17,6 +17,10 @@ export const apiFetch = async (endpoint, options = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem('ph_token');
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    }
     const error = new Error(data.message || 'Something went wrong with the API request');
     error.status = response.status;
     error.data = data;

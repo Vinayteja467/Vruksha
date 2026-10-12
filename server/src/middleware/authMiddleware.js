@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { inMemoryStore } from '../config/inMemoryStore.js';
 import { User } from '../models/User.js';
 import { isConnectedToMongo } from '../config/db.js';
+import { env } from '../config/env.js';
 
 export const protect = async (req, res, next) => {
   let token;
@@ -14,7 +15,7 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'pureharvest_super_secure_jwt_secret_key_2026_d2c');
+    const decoded = jwt.verify(token, env.JWT_SECRET);
 
     if (isConnectedToMongo) {
       req.user = await User.findById(decoded.id).select('-password');

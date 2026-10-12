@@ -104,7 +104,7 @@ export const Footer = () => {
             <h4 className="text-lg font-serif font-bold text-cream-50">Join our wellness circle</h4>
             <p className="text-xs text-cream-200/70 mt-1">Get 10% off your first order plus farm recipe inspirations.</p>
           </div>
-          <form onSubmit={handleNewsletter} className="flex w-full md:w-auto max-w-md gap-2">
+          <form onSubmit={handleNewsletter} className="flex flex-col min-[380px]:flex-row w-full md:w-auto max-w-md gap-2">
             <input
               type="email"
               value={email}
@@ -114,7 +114,7 @@ export const Footer = () => {
             />
             <button
               type="submit"
-              className="bg-earth-600 hover:bg-earth-500 text-white font-semibold px-4 py-2.5 rounded-lg text-xs uppercase tracking-wider flex items-center gap-1.5 flex-shrink-0 transition-colors"
+              className="min-h-[44px] bg-earth-600 hover:bg-earth-500 text-white font-semibold px-5 py-2.5 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 flex-shrink-0 transition-colors"
             >
               <span>Subscribe</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -123,12 +123,12 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Bar: Copyright & Payment Badges */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-300/70">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream-300/70 text-center sm:text-left">
           <p>© {new Date().getFullYear()} VRUKSHA Naturals Pvt. Ltd. All rights reserved.</p>
           
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3">
             <span className="text-[11px] text-cream-300/50">Accepted Payments:</span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
               <span className="px-2 py-0.5 rounded bg-forest-900 border border-forest-800 text-[10px] font-bold text-cream-200">UPI</span>
               <span className="px-2 py-0.5 rounded bg-forest-900 border border-forest-800 text-[10px] font-bold text-cream-200">Cards</span>
               <span className="px-2 py-0.5 rounded bg-forest-900 border border-forest-800 text-[10px] font-bold text-cream-200">NetBanking</span>

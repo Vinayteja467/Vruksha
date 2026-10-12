@@ -58,12 +58,28 @@ export const AccountPage = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (user) {
-      setProfileName(user.name);
+    if (!user) {
+      setProfileName('');
+      setProfilePhone('');
+      setAddresses([]);
+      setOrders([]);
+      navigate('/login', { replace: true });
+    } else {
+      setProfileName(user.name || '');
       setProfilePhone(user.phone || '');
       setAddresses(user.addresses || []);
     }
-  }, [user]);
+  }, [user, navigate]);
+
+  const handleSignOut = () => {
+    logout();
+    setOrders([]);
+    setWishlistProducts([]);
+    setProfileName('');
+    setProfilePhone('');
+    setAddresses([]);
+    navigate('/login', { replace: true });
+  };
 
   // Load User Orders
   useEffect(() => {
@@ -128,7 +144,7 @@ export const AccountPage = () => {
     <div className="bg-cream-50/50 min-h-screen py-10 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Welcome Header */}
-        <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-forest-800 text-cream-50 font-serif font-bold text-2xl flex items-center justify-center shadow-md">
               {user?.name?.split(' ').map((n) => n[0]).join('').substring(0, 2) || 'PH'}
@@ -161,7 +177,7 @@ export const AccountPage = () => {
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Navigation Sidebar (4 cols) */}
-          <div className="lg:col-span-4 bg-white rounded-3xl border border-cream-200 p-4 shadow-soft space-y-1">
+          <div className="lg:col-span-4 bg-white rounded-3xl border border-cream-200 p-2 sm:p-4 shadow-soft flex overflow-x-auto lg:flex-col gap-1.5 lg:space-y-1 no-scrollbar">
             {[
               { id: 'profile', label: 'My Profile', icon: User },
               { id: 'orders', label: `My Orders (${orders.length})`, icon: Package },
@@ -175,26 +191,26 @@ export const AccountPage = () => {
                   key={item.id}
                   type="button"
                   onClick={() => handleTabChange(item.id)}
-                  className={`w-full flex items-center justify-between p-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors text-left ${
+                  className={`flex-shrink-0 lg:w-full flex items-center justify-between p-2.5 sm:p-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors text-left whitespace-nowrap min-h-[44px] ${
                     activeTab === item.id
                       ? 'bg-forest-900 text-cream-50 shadow-sm'
                       : 'text-stone-700 hover:bg-cream-100'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-60" />
+                  <ArrowRight className="w-3.5 h-3.5 opacity-60 hidden lg:inline" />
                 </button>
               );
             })}
 
-            <div className="pt-2 border-t border-cream-100">
+            <div className="lg:pt-2 lg:border-t border-cream-100 flex-shrink-0">
               <button
                 type="button"
-                onClick={logout}
-                className="w-full flex items-center gap-3 p-3.5 rounded-xl text-xs font-bold uppercase tracking-wider text-rose-700 hover:bg-rose-50 transition-colors text-left"
+                onClick={handleSignOut}
+                className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl text-xs font-bold uppercase tracking-wider text-rose-700 hover:bg-rose-50 transition-colors text-left whitespace-nowrap min-h-[44px]"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>
@@ -203,7 +219,7 @@ export const AccountPage = () => {
           </div>
 
           {/* Tab Content Panels (8 cols) */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border border-cream-200 p-6 sm:p-10 shadow-soft">
+          <div className="lg:col-span-8 bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 lg:p-10 shadow-soft">
             {/* PROFILE TAB */}
             {activeTab === 'profile' && (
               <div className="space-y-6">

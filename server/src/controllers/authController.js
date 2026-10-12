@@ -3,10 +3,11 @@ import bcrypt from 'bcryptjs';
 import { inMemoryStore } from '../config/inMemoryStore.js';
 import { User } from '../models/User.js';
 import { isConnectedToMongo } from '../config/db.js';
+import { env } from '../config/env.js';
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'pureharvest_super_secure_jwt_secret_key_2026_d2c', {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  return jwt.sign({ id }, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN
   });
 };
 

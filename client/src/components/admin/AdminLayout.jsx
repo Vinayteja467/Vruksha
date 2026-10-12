@@ -19,11 +19,16 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 export const AdminLayout = () => {
-  const { user, isAdmin, logout, quickLogin } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  // If not logged in as admin, provide a quick login banner
+  const handleAdminLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
+  // If not logged in as admin, provide a secure sign-in link
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-forest-950 flex items-center justify-center p-4">
@@ -36,16 +41,13 @@ export const AdminLayout = () => {
             You must be logged in as an administrator to access the VRUKSHA corporate control panel.
           </p>
           <div className="pt-2 space-y-2">
-            <button
-              type="button"
-              onClick={async () => {
-                const res = await quickLogin('admin');
-                if (res?.success) navigate('/admin');
-              }}
-              className="w-full py-3 bg-forest-900 hover:bg-forest-800 text-cream-50 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-md"
+            <Link
+              to="/login"
+              state={{ from: { pathname: '/admin' } }}
+              className="block w-full py-3 bg-forest-900 hover:bg-forest-800 text-cream-50 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-md text-center"
             >
-              Sign In as Administrator
-            </button>
+              Sign In to Admin Account
+            </Link>
             <Link
               to="/"
               className="block py-2 text-xs font-semibold text-stone-500 hover:text-stone-800"
@@ -84,17 +86,26 @@ export const AdminLayout = () => {
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1 rounded-lg text-cream-200 hover:text-white"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-lg text-cream-200 hover:text-white"
+            aria-label="Toggle admin sidebar"
           >
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <span className="font-serif font-bold text-lg">VRUKSHA Admin</span>
         </div>
-        <Link to="/" className="text-xs text-forest-300 flex items-center gap-1 hover:underline">
+        <Link to="/" className="text-xs text-forest-300 flex items-center gap-1 hover:underline min-h-[44px] items-center">
           <Store className="w-3.5 h-3.5" />
           <span>Store</span>
         </Link>
       </div>
+
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Admin Sidebar */}
       <aside
@@ -164,7 +175,7 @@ export const AdminLayout = () => {
 
           <button
             type="button"
-            onClick={logout}
+            onClick={handleAdminLogout}
             className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/40 transition-colors text-left"
           >
             <LogOut className="w-4 h-4" />

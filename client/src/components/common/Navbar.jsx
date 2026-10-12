@@ -33,6 +33,13 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleLogout = () => {
+    logout();
+    setIsAccountDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    navigate('/login', { replace: true });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 25);
@@ -81,7 +88,7 @@ export const Navbar = () => {
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 -ml-2 text-forest-900 hover:text-forest-700 focus:outline-none"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center p-2 -ml-2 text-forest-900 hover:text-forest-700 focus:outline-none"
                 aria-label="Toggle navigation menu"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -167,7 +174,7 @@ export const Navbar = () => {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full transition-colors"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full transition-colors"
                 aria-label="Search"
               >
                 <Search className="w-5 h-5" />
@@ -176,7 +183,7 @@ export const Navbar = () => {
               {/* Wishlist */}
               <Link
                 to="/account?tab=wishlist"
-                className="p-2 text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full relative transition-colors hidden sm:flex"
+                className="min-w-[44px] min-h-[44px] items-center justify-center text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full relative transition-colors hidden sm:flex"
                 aria-label="Wishlist"
               >
                 <Heart className="w-5 h-5" />
@@ -195,7 +202,7 @@ export const Navbar = () => {
               >
                 <Link
                   to={isAuthenticated ? '/account' : '/login'}
-                  className="p-2 text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full flex items-center gap-1 transition-colors"
+                  className="min-w-[44px] min-h-[44px] px-2 text-stone-700 hover:text-forest-800 hover:bg-cream-200/50 rounded-full flex items-center gap-1 transition-colors"
                   aria-label="Account"
                 >
                   <User className="w-5 h-5" />
@@ -241,7 +248,7 @@ export const Navbar = () => {
                           <div className="border-t border-cream-100 my-1" />
                           <button
                             type="button"
-                            onClick={logout}
+                            onClick={handleLogout}
                             className="w-full flex items-center gap-2 px-4 py-2 text-xs font-medium text-rose-700 hover:bg-rose-50 text-left"
                           >
                             <LogOut className="w-3.5 h-3.5" />
@@ -273,7 +280,7 @@ export const Navbar = () => {
               <button
                 type="button"
                 onClick={openDrawer}
-                className="p-2 sm:px-3 sm:py-2 text-forest-900 bg-forest-100/70 hover:bg-forest-100 rounded-full sm:rounded-xl flex items-center gap-2 transition-all"
+                className="min-h-[44px] min-w-[44px] p-2 sm:px-3 sm:py-2 text-forest-900 bg-forest-100/70 hover:bg-forest-100 rounded-full sm:rounded-xl flex items-center justify-center gap-2 transition-all"
                 aria-label="Shopping Cart"
               >
                 <div className="relative">
@@ -294,16 +301,18 @@ export const Navbar = () => {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-cream-200 bg-white shadow-xl animate-in slide-in-from-top-4 duration-200">
-            <div className="px-4 pt-3 pb-6 space-y-3">
+          <div className="lg:hidden border-t border-cream-200 bg-white shadow-xl animate-in slide-in-from-top-4 duration-200 max-h-[calc(100vh-72px)] overflow-y-auto overscroll-contain">
+            <div className="px-4 pt-3 pb-8 space-y-3">
               <NavLink
                 to="/"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
               >
                 Home
               </NavLink>
               <NavLink
                 to="/shop"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
               >
                 Shop All Products
@@ -315,6 +324,7 @@ export const Navbar = () => {
                   <Link
                     key={c.path}
                     to={c.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="block text-sm text-stone-700 hover:text-forest-800 py-1"
                   >
                     {c.name}
@@ -323,7 +333,24 @@ export const Navbar = () => {
               </div>
 
               <NavLink
+                to="/account?tab=wishlist"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
+              >
+                <span className="flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-forest-700" />
+                  <span>My Wishlist</span>
+                </span>
+                {wishlistCount > 0 && (
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                    {wishlistCount}
+                  </span>
+                )}
+              </NavLink>
+
+              <NavLink
                 to="/bulk-orders"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-between px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
               >
                 <span>Bulk Orders</span>
@@ -331,12 +358,14 @@ export const Navbar = () => {
               </NavLink>
               <NavLink
                 to="/about"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
               >
                 About Our Journey
               </NavLink>
               <NavLink
                 to="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="block px-3 py-2 rounded-lg text-base font-medium text-forest-950 hover:bg-cream-100"
               >
                 Contact & Support
@@ -361,7 +390,7 @@ export const Navbar = () => {
                       </Link>
                     )}
                     <button
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="px-3 py-1.5 text-sm text-rose-700 text-left"
                     >
                       Log Out

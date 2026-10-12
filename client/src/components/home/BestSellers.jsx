@@ -34,7 +34,7 @@ export const BestSellers = ({ products = [] }) => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-5 lg:gap-6">
           {displayList.map((product) => (
             <ProductCard key={product.id || product.slug} product={product} />
           ))}

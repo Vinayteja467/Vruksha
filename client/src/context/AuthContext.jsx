@@ -67,11 +67,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setToken(null);
+      setUser(null);
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
+
   const logout = () => {
     localStorage.removeItem('ph_token');
+    localStorage.removeItem('ph_cart');
+    localStorage.removeItem('ph_coupon');
+    localStorage.removeItem('ph_wishlist');
     setToken(null);
     setUser(null);
     addToast('You have been logged out', 'info');
+    window.dispatchEvent(new CustomEvent('auth:logout'));
   };
 
   const updateProfile = async (profileData) => {
@@ -89,14 +102,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Demo Login Helper
-  const quickLogin = async (role = 'user') => {
-    if (role === 'admin') {
-      return await login('admin@pureharvest.in', 'Admin@123');
-    }
-    return await login('user@pureharvest.in', 'User@123');
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -108,8 +113,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        updateProfile,
-        quickLogin
+        updateProfile
       }}
     >
       {children}

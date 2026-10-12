@@ -62,7 +62,7 @@ export const SearchModal = ({ isOpen, onClose }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-4 sm:pt-20 px-2 sm:px-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -79,21 +79,22 @@ export const SearchModal = ({ isOpen, onClose }) => {
             className="relative w-full max-w-2xl bg-white rounded-2xl shadow-premium border border-cream-200 overflow-hidden z-10"
           >
             {/* Search Input Bar */}
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center border-b border-cream-200 px-4 py-3 sm:py-4">
-              <Search className="w-5 h-5 text-forest-700 ml-2 mr-3 flex-shrink-0" />
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center border-b border-cream-200 px-3 sm:px-4 py-2.5 sm:py-4 gap-2">
+              <Search className="w-5 h-5 text-forest-700 ml-1 sm:ml-2 flex-shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search natural products (e.g., Beetroot, Moringa, Amla)..."
-                className="w-full bg-transparent text-forest-950 placeholder:text-stone-400 font-medium text-base sm:text-lg focus:outline-none"
+                placeholder="Search natural products (e.g. Beetroot, Moringa)..."
+                className="w-full bg-transparent text-forest-950 placeholder:text-stone-400 font-medium text-sm sm:text-lg focus:outline-none"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery('')}
-                  className="p-1 text-stone-400 hover:text-stone-600 mr-2"
+                  className="min-w-[36px] min-h-[36px] flex items-center justify-center text-stone-400 hover:text-stone-600"
+                  aria-label="Clear search query"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -101,9 +102,11 @@ export const SearchModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="text-xs uppercase tracking-wider font-semibold text-stone-500 hover:text-forest-800 px-2 py-1 bg-stone-100 rounded-md"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center text-xs uppercase tracking-wider font-semibold text-stone-500 hover:text-forest-800 px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors"
+                aria-label="Close search"
               >
-                ESC
+                <X className="w-4 h-4 sm:hidden" />
+                <span className="hidden sm:inline">ESC</span>
               </button>
             </form>
 

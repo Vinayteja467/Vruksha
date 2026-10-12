@@ -22,12 +22,14 @@ import { ProductCard } from '../components/product/ProductCard';
 import { formatPrice } from '../utils/formatters';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { api } from '../api/client';
 
 export const ProductDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToCart, openDrawer } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToast } = useToast();
@@ -139,8 +141,14 @@ export const ProductDetailPage = () => {
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    if (!reviewName || !reviewComment) {
-      addToast('Please provide your name and review', 'error');
+    if (!user) {
+      addToast('Please sign in to submit a review for this product', 'error');
+      navigate('/login', { state: { from: { pathname: `/product/${slug}` } } });
+      return;
+    }
+
+    if (!reviewComment) {
+      addToast('Please write your review comment', 'error');
       return;
     }
     setSubmittingReview(true);
@@ -148,9 +156,9 @@ export const ProductDetailPage = () => {
       const data = await api.post('/reviews', {
         productId: product.id || product.slug,
         productName: product.name,
-        name: reviewName,
+        name: reviewName || user.name,
         rating: reviewRating,
-        title: reviewTitle || 'Verified Customer Review',
+        title: reviewTitle || 'Customer Review',
         comment: reviewComment
       });
 
@@ -159,10 +167,15 @@ export const ProductDetailPage = () => {
         setReviewName('');
         setReviewTitle('');
         setReviewComment('');
-        addToast('Review submitted successfully! Thank you.', 'success');
+        addToast(
+          data.review.verifiedPurchase
+            ? 'Verified purchase review submitted successfully! 🎉'
+            : 'Review submitted successfully! Thank you.',
+          'success'
+        );
       }
     } catch (err) {
-      addToast('Failed to submit review', 'error');
+      addToast(err.data?.message || 'Failed to submit review', 'error');
     } finally {
       setSubmittingReview(false);
     }
@@ -186,7 +199,7 @@ export const ProductDetailPage = () => {
         </nav>
 
         {/* Main Product Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 card p-6 sm:p-10 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 card p-4 sm:p-8 lg:p-10 mb-12 sm:mb-16">
           {/* Left Column: Image Gallery with Thumbnails (6 cols) */}
           <div className="lg:col-span-6 space-y-4">
             {/* Main Featured Image with Zoom */}
@@ -317,24 +330,24 @@ export const ProductDetailPage = () => {
 
             {/* Quantity Controls & Action Buttons */}
             <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col min-[380px]:flex-row items-stretch min-[380px]:items-center gap-3 sm:gap-4">
                 {/* Quantity Counter */}
-                <div className="flex items-center border border-cream-300 rounded-xl bg-white overflow-hidden p-1">
+                <div className="flex items-center justify-between min-[380px]:justify-start border border-cream-300 rounded-xl bg-white overflow-hidden p-1 min-h-[44px]">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 text-stone-600 hover:bg-cream-100 rounded-lg"
+                    className="min-w-[40px] min-h-[40px] flex items-center justify-center p-2 text-stone-600 hover:bg-cream-100 rounded-lg transition-colors"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="px-4 text-sm font-bold text-forest-950">
+                  <span className="px-4 text-sm font-bold text-forest-950 text-center">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 text-stone-600 hover:bg-cream-100 rounded-lg"
+                    className="min-w-[40px] min-h-[40px] flex items-center justify-center p-2 text-stone-600 hover:bg-cream-100 rounded-lg transition-colors"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-4 h-4" />
@@ -345,7 +358,7 @@ export const ProductDetailPage = () => {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="btn-primary flex-1 py-4 text-xs uppercase tracking-widest shadow-glow flex items-center justify-center gap-2"
+                  className="btn-primary flex-1 min-h-[48px] py-3.5 px-4 text-xs uppercase tracking-widest shadow-glow flex items-center justify-center gap-2"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>ADD TO CART</span>
@@ -356,7 +369,7 @@ export const ProductDetailPage = () => {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="btn-accent w-full py-3.5 text-xs uppercase tracking-widest shadow-elevated flex items-center justify-center gap-2"
+                className="btn-accent w-full min-h-[48px] py-3.5 text-xs uppercase tracking-widest shadow-elevated flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4 fill-current" />
                 <span>BUY NOW WITH 1-CLICK</span>
@@ -386,9 +399,9 @@ export const ProductDetailPage = () => {
         </div>
 
         {/* Product Details Tabs Section */}
-        <div className="bg-white rounded-3xl border border-cream-200 shadow-soft overflow-hidden mb-16">
+        <div className="bg-white rounded-3xl border border-cream-200 shadow-soft overflow-hidden mb-12 sm:mb-16">
           {/* Tab Navigation Header */}
-          <div className="flex items-center border-b border-cream-200 overflow-x-auto whitespace-nowrap bg-cream-50/50">
+          <div className="flex items-center border-b border-cream-200 overflow-x-auto whitespace-nowrap bg-cream-50/50 no-scrollbar">
             {[
               { id: 'overview', label: 'Overview' },
               { id: 'ingredients', label: 'Ingredients & Sourcing' },
@@ -402,7 +415,7 @@ export const ProductDetailPage = () => {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-4 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+                className={`px-3.5 sm:px-5 py-3 sm:py-4 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${
                   activeTab === tab.id
                     ? 'border-forest-800 text-forest-900 bg-white'
                     : 'border-transparent text-stone-500 hover:text-forest-800'
@@ -414,7 +427,7 @@ export const ProductDetailPage = () => {
           </div>
 
           {/* Tab Content Panels */}
-          <div className="p-6 sm:p-10">
+          <div className="p-4 sm:p-8 lg:p-10">
             {activeTab === 'overview' && (
               <div className="space-y-6 max-w-3xl">
                 <h3 className="font-serif text-2xl font-bold text-forest-950">About {product.name}</h3>
@@ -615,7 +628,7 @@ export const ProductDetailPage = () => {
 
         {/* Frequently Bought Together Bundle */}
         {upsellItem && (
-          <div className="bg-cream-100 rounded-3xl p-6 sm:p-8 border border-cream-200 mb-16 shadow-soft">
+          <div className="bg-cream-100 rounded-3xl p-4 sm:p-8 border border-cream-200 mb-12 sm:mb-16 shadow-soft">
             <span className="text-xs font-bold uppercase tracking-widest text-forest-700 block mb-1">
               Curated Pairing
             </span>
@@ -623,7 +636,7 @@ export const ProductDetailPage = () => {
               Frequently Bought Together
             </h3>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
               <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
                 {/* Item 1 */}
                 <div className="flex items-center gap-3">

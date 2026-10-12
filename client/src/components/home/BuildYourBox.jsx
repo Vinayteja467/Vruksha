@@ -91,7 +91,7 @@ export const BuildYourBox = ({ products = [] }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Product Selection Grid (8 cols) */}
           <div className="lg:col-span-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
               {availableProducts.map((p) => {
                 const id = p.id || p.slug;
                 const isSelected = !!selectedItems[id];
@@ -170,7 +170,7 @@ export const BuildYourBox = ({ products = [] }) => {
           </div>
 
           {/* Right: Custom Box Summary & Tray (4 cols) */}
-          <div className="lg:col-span-4 bg-forest-900 rounded-3xl p-6 border border-forest-800 shadow-premium sticky top-28 space-y-6">
+          <div className="lg:col-span-4 bg-forest-900 rounded-3xl p-4 sm:p-6 border border-forest-800 shadow-premium sticky top-28 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-forest-800">
               <div className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-forest-400" />

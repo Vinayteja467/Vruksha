@@ -217,7 +217,7 @@ export const ProductFilters = ({
             className="fixed inset-0 bg-forest-950/50 backdrop-blur-xs"
             onClick={onCloseMobile}
           />
-          <div className="relative ml-auto w-full max-w-xs bg-white h-full shadow-2xl p-6 overflow-y-auto z-10 flex flex-col justify-between">
+          <div className="relative ml-auto w-full max-w-xs bg-white h-full shadow-2xl p-4 sm:p-6 overflow-y-auto z-10 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-cream-200">
                 <div className="flex items-center gap-2">
@@ -227,7 +227,8 @@ export const ProductFilters = ({
                 <button
                   type="button"
                   onClick={onCloseMobile}
-                  className="p-1 rounded-lg text-stone-400 hover:text-stone-700"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-stone-400 hover:text-stone-700"
+                  aria-label="Close filters"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -239,7 +240,7 @@ export const ProductFilters = ({
               <button
                 type="button"
                 onClick={onCloseMobile}
-                className="w-full py-3 bg-forest-800 text-white rounded-xl text-xs uppercase font-bold tracking-wider"
+                className="w-full min-h-[44px] py-3 bg-forest-800 text-white rounded-xl text-xs uppercase font-bold tracking-wider hover:bg-forest-700 transition-colors"
               >
                 Apply Filters
               </button>

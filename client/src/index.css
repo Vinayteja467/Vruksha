@@ -38,20 +38,21 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   h1, h2, h3, h4 {
     font-family: "Playfair Display", Georgia, serif;
-    line-height: 1.12;
+    line-height: 1.15;
     letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
-  /* Fluid type: scales smoothly, no breakpoint jumps */
-  h1 { font-size: clamp(2.4rem, 5vw + 1rem, 4.75rem); font-weight: 700; }
-  h2 { font-size: clamp(1.9rem, 3vw + 1rem, 3.25rem); font-weight: 600; }
-  h3 { font-size: clamp(1.3rem, 1.2vw + 1rem, 1.75rem); font-weight: 600; }
+  /* Fluid type: scales smoothly across mobile (320px) to desktop (1440px+) */
+  h1 { font-size: clamp(1.85rem, 5vw + 0.5rem, 4.25rem); font-weight: 700; }
+  h2 { font-size: clamp(1.45rem, 3vw + 0.5rem, 2.85rem); font-weight: 600; }
+  h3 { font-size: clamp(1.15rem, 1.2vw + 0.5rem, 1.65rem); font-weight: 600; }
   p  { text-wrap: pretty; }
 
   img, video, svg { max-width: 100%; height: auto; display: block; }

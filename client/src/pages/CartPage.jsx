@@ -103,29 +103,29 @@ export const CartPage = () => {
         </div>
 
         {/* Cart Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12 sm:mb-16">
           {/* Left Table / List (8 cols) */}
-          <div className="lg:col-span-8 card p-6 divide-y divide-cream-100">
+          <div className="lg:col-span-8 card p-4 sm:p-6 divide-y divide-cream-100">
             {cartItems.map((item) => (
               <div
                 key={`${item.product}-${item.size}`}
-                className="py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                className="py-4 sm:py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-20 h-20 rounded-2xl object-cover bg-cream-100 border border-cream-200 flex-shrink-0"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover bg-cream-100 border border-cream-200 flex-shrink-0"
                   />
                   <div>
                     <Link
                       to={`/product/${item.slug}`}
-                      className="font-serif font-bold text-base text-forest-950 hover:text-forest-700 transition-colors"
+                      className="font-serif font-bold text-sm sm:text-base text-forest-950 hover:text-forest-700 transition-colors line-clamp-1"
                     >
                       {item.name}
                     </Link>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-stone-500 bg-cream-100 px-2.5 py-0.5 rounded-md border border-cream-200 font-medium">
+                      <span className="text-[11px] sm:text-xs text-stone-500 bg-cream-100 px-2 py-0.5 rounded-md border border-cream-200 font-medium">
                         Size: {item.size}
                       </span>
                       <span className="text-xs text-forest-800 font-semibold">
@@ -136,13 +136,13 @@ export const CartPage = () => {
                 </div>
 
                 {/* Right controls */}
-                <div className="flex items-center justify-between w-full sm:w-auto gap-6 pt-2 sm:pt-0 border-t sm:border-t-0 border-cream-100">
+                <div className="flex items-center justify-between w-full sm:w-auto gap-3 sm:gap-6 pt-2 sm:pt-0 border-t sm:border-t-0 border-cream-100">
                   {/* Quantity Controls */}
                   <div className="flex items-center border border-cream-300 rounded-xl overflow-hidden bg-cream-50 p-0.5">
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.product, item.size, item.quantity - 1)}
-                      className="p-1.5 text-stone-600 hover:bg-cream-200 rounded-lg"
+                      className="min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 text-stone-600 hover:bg-cream-200 rounded-lg"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="w-3.5 h-3.5" />
@@ -153,19 +153,19 @@ export const CartPage = () => {
                     <button
                       type="button"
                       onClick={() => updateQuantity(item.product, item.size, item.quantity + 1)}
-                      className="p-1.5 text-stone-600 hover:bg-cream-200 rounded-lg"
+                      className="min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 text-stone-600 hover:bg-cream-200 rounded-lg"
                       aria-label="Increase quantity"
                     >
                       <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="text-right min-w-[80px]">
-                    <p className="font-serif font-bold text-base text-forest-950">
+                  <div className="text-right min-w-[70px] sm:min-w-[80px]">
+                    <p className="font-serif font-bold text-sm sm:text-base text-forest-950">
                       {formatPrice(item.price * item.quantity)}
                     </p>
                     {item.originalPrice > item.price && (
-                      <p className="text-[11px] text-stone-400 line-through">
+                      <p className="text-[10px] sm:text-[11px] text-stone-400 line-through">
                         {formatPrice(item.originalPrice * item.quantity)}
                       </p>
                     )}
@@ -174,7 +174,7 @@ export const CartPage = () => {
                   <button
                     type="button"
                     onClick={() => removeFromCart(item.product, item.size)}
-                    className="p-2 text-stone-400 hover:text-rose-600 rounded-lg transition-colors"
+                    className="min-w-[36px] min-h-[36px] flex items-center justify-center p-2 text-stone-400 hover:text-rose-600 rounded-lg transition-colors"
                     aria-label="Remove item"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -185,7 +185,7 @@ export const CartPage = () => {
           </div>
 
           {/* Right Order Summary (4 cols) */}
-          <div className="lg:col-span-4 bg-white rounded-3xl border border-cream-200 p-6 shadow-soft space-y-6 sticky top-28">
+          <div className="lg:col-span-4 bg-white rounded-3xl border border-cream-200 p-4 sm:p-6 shadow-soft space-y-6 sticky top-28">
             <h3 className="font-serif font-bold text-xl text-forest-950 border-b border-cream-100 pb-3">
               Order Summary
             </h3>

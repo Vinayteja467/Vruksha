@@ -5,11 +5,11 @@ import { Sparkles, RefreshCcw } from 'lucide-react';
 export const ProductGrid = ({ products = [], loading = false, onResetFilters }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
           <div key={i} className="bg-white rounded-2xl border border-cream-200 overflow-hidden animate-pulse">
             <div className="aspect-square bg-cream-200" />
-            <div className="p-4 space-y-3">
+            <div className="p-3 sm:p-4 space-y-3">
               <div className="h-3 bg-cream-200 rounded w-1/3" />
               <div className="h-5 bg-cream-200 rounded w-3/4" />
               <div className="h-3 bg-cream-200 rounded w-full" />
@@ -46,7 +46,7 @@ export const ProductGrid = ({ products = [], loading = false, onResetFilters }) 
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
       {products.map((product) => (
         <ProductCard key={product.id || product.slug} product={product} />
       ))}

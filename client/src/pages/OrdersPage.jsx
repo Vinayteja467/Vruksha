@@ -4,7 +4,12 @@ import { Package, Truck, Calendar, CheckCircle2, Clock, AlertCircle, ArrowLeft, 
 import { formatPrice, formatDate, formatDateTime } from '../utils/formatters';
 import { api } from '../api/client';
 
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 export const OrdersPage = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -12,6 +17,12 @@ export const OrdersPage = () => {
   const stages = ['Order Placed', 'Confirmed', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
 
   useEffect(() => {
+    if (!user) {
+      setOrders([]);
+      navigate('/login', { replace: true });
+      return;
+    }
+
     const fetchOrders = async () => {
       setLoading(true);
       try {
@@ -29,7 +40,7 @@ export const OrdersPage = () => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [user, navigate]);
 
   const getStageIndex = (status) => {
     const idx = stages.indexOf(status);
@@ -128,7 +139,7 @@ export const OrdersPage = () => {
 
             {/* Selected Order Detailed Tracking Timeline (7 cols) */}
             {selectedOrder && (
-              <div className="lg:col-span-7 bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-8 sticky top-28">
+              <div className="lg:col-span-7 bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft space-y-8 sticky top-28">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-cream-100">
                   <div>

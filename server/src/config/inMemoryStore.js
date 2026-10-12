@@ -394,17 +394,6 @@ class InMemoryStore {
       ...orderData
     };
     this.orders.unshift(newOrder);
-
-    // Update stock levels
-    if (orderData.items && Array.isArray(orderData.items)) {
-      orderData.items.forEach(item => {
-        const prod = this.products.find(p => p.id === item.product || p.slug === item.slug);
-        if (prod) {
-          prod.stock = Math.max(0, prod.stock - (item.quantity || 1));
-        }
-      });
-    }
-
     return newOrder;
   }
 

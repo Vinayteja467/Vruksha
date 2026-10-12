@@ -11,18 +11,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('ph_cart');
-      return saved ? JSON.parse(saved) : [
-        {
-          product: 'prod-001',
-          name: 'Pure Beetroot Powder',
-          slug: 'beetroot-powder',
-          image: 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&w=800&q=80',
-          size: '250g',
-          price: 499,
-          originalPrice: 649,
-          quantity: 1
-        }
-      ];
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
@@ -36,6 +25,15 @@ export const CartProvider = ({ children }) => {
       return null;
     }
   });
+
+  useEffect(() => {
+    const handleLogout = () => {
+      setCartItems([]);
+      setAppliedCoupon(null);
+    };
+    window.addEventListener('auth:logout', handleLogout);
+    return () => window.removeEventListener('auth:logout', handleLogout);
+  }, []);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { addToast } = useToast();

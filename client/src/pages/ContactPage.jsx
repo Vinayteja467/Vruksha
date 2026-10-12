@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, MessageCircle, Send, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
+import { api } from '../api/client';
+
 export const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -10,16 +12,29 @@ export const ContactPage = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [referenceId, setReferenceId] = useState('');
+  const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       addToast('Please complete all required fields', 'error');
       return;
     }
-    setSubmitted(true);
-    addToast('Thank you! Your message has been sent to our customer care team.', 'success');
+    setLoading(true);
+    try {
+      const res = await api.post('/contact', formData);
+      if (res.success) {
+        setSubmitted(true);
+        setReferenceId(res.referenceId || '');
+        addToast('Thank you! Your message has been sent to our customer care team.', 'success');
+      }
+    } catch (err) {
+      addToast(err.data?.message || err.message || 'Failed to submit inquiry', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const whatsappUrl = 'https://wa.me/919573636998?text=Hello%20VRUKSHA%20Customer%20Support%2C%20I%20have%20an%20inquiry.';
@@ -40,9 +55,9 @@ export const ContactPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Form (7 cols) */}
-          <div className="lg:col-span-7 card p-6 sm:p-10">
+          <div className="lg:col-span-7 card p-4 sm:p-8 lg:p-10">
             <h2 className="font-serif text-2xl font-bold text-forest-950 mb-2">Send us a message</h2>
             <p className="text-xs text-stone-500 mb-6">Our customer care desk typically responds within 3 hours.</p>
 
@@ -50,11 +65,17 @@ export const ContactPage = () => {
               <div className="p-8 text-center bg-emerald-50 rounded-2xl border border-emerald-200 space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                 <h3 className="font-serif font-bold text-xl text-forest-950">Message Sent!</h3>
+                {referenceId && (
+                  <p className="text-xs font-mono font-bold text-forest-800 bg-white inline-block px-3 py-1 rounded-full border border-forest-200">
+                    Ref ID: {referenceId}
+                  </p>
+                )}
                 <p className="text-xs text-stone-600">Thank you for reaching out. We will get back to your email shortly.</p>
                 <button
                   type="button"
                   onClick={() => {
                     setSubmitted(false);
+                    setReferenceId('');
                     setFormData({ name: '', email: '', phone: '', message: '' });
                   }}
                   className="btn-primary px-4 py-2 text-xs font-bold"
@@ -145,7 +166,7 @@ export const ContactPage = () => {
 
           {/* Right Contact Details & Map Placeholder (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-6">
+            <div className="bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft space-y-6">
               <h3 className="font-serif font-bold text-xl text-forest-950">Direct Contacts</h3>
 
               <div className="space-y-4 text-xs">

@@ -412,16 +412,17 @@ export const AdminProductsPage = () => {
 
       {/* Edit / Create Modal */}
       {showModal && editingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full my-8 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white rounded-3xl p-4 sm:p-8 max-w-2xl w-full my-4 max-h-[92vh] overflow-y-auto shadow-2xl space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-stone-200">
-              <h2 className="font-serif font-bold text-xl text-stone-900">
+              <h2 className="font-serif font-bold text-lg sm:text-xl text-stone-900">
                 {editingProduct.id ? `Edit: ${editingProduct.name}` : 'Create New Product'}
               </h2>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-stone-400 hover:text-stone-700"
+                className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-stone-400 hover:text-stone-700"
+                aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -519,15 +520,15 @@ export const AdminProductsPage = () => {
 
                 <div className="space-y-2">
                   {editingProduct.sizes?.map((sizeItem, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-xl border border-stone-200">
+                    <div key={idx} className="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-white p-2.5 rounded-xl border border-stone-200">
                       <input
                         type="text"
                         placeholder="Size (e.g. 100g)"
                         value={sizeItem.size}
                         onChange={(e) => handleSizeVariantChange(idx, 'size', e.target.value)}
-                        className="w-24 p-1.5 rounded-lg border border-stone-200 text-xs font-medium"
+                        className="w-full sm:w-24 p-1.5 rounded-lg border border-stone-200 text-xs font-medium"
                       />
-                      <div className="flex items-center gap-1 flex-1">
+                      <div className="flex items-center gap-1 flex-1 min-w-[100px]">
                         <span className="text-stone-400 text-xs">₹</span>
                         <input
                           type="number"
@@ -537,7 +538,7 @@ export const AdminProductsPage = () => {
                           className="w-full p-1.5 rounded-lg border border-stone-200 text-xs font-bold text-stone-900"
                         />
                       </div>
-                      <div className="flex items-center gap-1 flex-1">
+                      <div className="flex items-center gap-1 flex-1 min-w-[100px]">
                         <span className="text-stone-400 text-xs">MRP ₹</span>
                         <input
                           type="number"
@@ -551,8 +552,9 @@ export const AdminProductsPage = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveSizeVariant(idx)}
-                          className="p-1.5 text-stone-400 hover:text-rose-600 rounded-lg transition-colors"
+                          className="min-w-[36px] min-h-[36px] flex items-center justify-center p-1.5 text-stone-400 hover:text-rose-600 rounded-lg transition-colors ml-auto"
                           title="Delete Size"
+                          aria-label="Delete size variant"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

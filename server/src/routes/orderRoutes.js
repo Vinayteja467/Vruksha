@@ -10,10 +10,10 @@ import { protect, adminOnly } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', createOrder);
+router.post('/', protect, createOrder);
 router.get('/myorders', protect, getUserOrders);
 router.get('/all', protect, adminOnly, getAllOrders);
-router.get('/:id', getOrderById);
+router.get('/:id', protect, getOrderById);
 router.put('/:id/status', protect, adminOnly, updateOrderStatus);
 
 export default router;

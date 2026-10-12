@@ -78,7 +78,7 @@ export const ProductCard = ({ product }) => {
         <button
           type="button"
           onClick={handleWishlistClick}
-          className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all z-10 ${
+          className={`absolute top-3 right-3 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full backdrop-blur-md transition-all z-10 ${
             isFavorited
               ? 'bg-rose-50 text-rose-600 shadow-sm'
               : 'bg-white/80 text-stone-600 hover:bg-white hover:text-rose-600 shadow-xs'
@@ -102,11 +102,11 @@ export const ProductCard = ({ product }) => {
       </Link>
 
       {/* Card Body */}
-      <div className="p-4 sm:p-5 flex flex-col flex-grow justify-between bg-white">
+      <div className="p-3 sm:p-5 flex flex-col flex-grow justify-between bg-white">
         <div>
           {/* Category & Rating */}
-          <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-forest-700">
+          <div className="flex items-center justify-between gap-1 mb-1.5 flex-wrap">
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-forest-700">
               {product.category}
             </span>
             <RatingStars rating={product.rating || 4.8} reviewCount={product.reviewCount} size="sm" />
@@ -114,13 +114,13 @@ export const ProductCard = ({ product }) => {
 
           {/* Product Title */}
           <Link to={`/product/${product.slug}`} className="block group-hover:text-forest-700 transition-colors">
-            <h3 className="font-serif font-bold text-base sm:text-lg text-forest-950 line-clamp-1 leading-snug">
+            <h3 className="font-serif font-bold text-sm sm:text-base lg:text-lg text-forest-950 line-clamp-2 min-h-[2.4rem] leading-snug">
               {product.name}
             </h3>
           </Link>
 
           {/* Short description */}
-          <p className="text-xs text-stone-500 line-clamp-2 mt-1 mb-3 leading-relaxed">
+          <p className="text-xs text-stone-500 line-clamp-2 mt-1 mb-3 leading-relaxed hidden sm:block">
             {product.shortDescription}
           </p>
         </div>
@@ -128,13 +128,13 @@ export const ProductCard = ({ product }) => {
         <div>
           {/* Size Pills */}
           {product.sizes && product.sizes.length > 1 && (
-            <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+            <div className="flex items-center gap-1.5 mb-2.5 sm:mb-3 flex-wrap">
               {product.sizes.slice(0, 4).map((s) => (
                 <button
                   key={s.size}
                   type="button"
                   onClick={() => setSelectedSize(s.size)}
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border transition-all ${
+                  className={`text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-md border transition-all ${
                     selectedSize === s.size
                       ? 'bg-forest-800 text-white border-forest-800 shadow-2xs'
                       : 'bg-cream-50 text-stone-600 border-cream-300 hover:border-forest-600'
@@ -147,13 +147,13 @@ export const ProductCard = ({ product }) => {
           )}
 
           {/* Price & Mobile Add Button */}
-          <div className="flex items-center justify-between pt-2 border-t border-cream-100">
-            <div className="flex items-baseline gap-2">
-              <span className="text-base sm:text-lg font-bold text-forest-950">
+          <div className="flex items-center justify-between pt-2 border-t border-cream-100 gap-1.5">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <span className="text-sm sm:text-base lg:text-lg font-bold text-forest-950">
                 {formatPrice(currentSizeObj.price)}
               </span>
               {currentSizeObj.originalPrice > currentSizeObj.price && (
-                <span className="text-xs text-stone-400 line-through">
+                <span className="text-[11px] sm:text-xs text-stone-400 line-through">
                   {formatPrice(currentSizeObj.originalPrice)}
                 </span>
               )}
@@ -163,7 +163,7 @@ export const ProductCard = ({ product }) => {
             <button
               type="button"
               onClick={handleQuickAdd}
-              className="sm:hidden p-2 bg-forest-800 text-white rounded-lg hover:bg-forest-700 shadow-sm"
+              className="sm:hidden min-w-[36px] min-h-[36px] p-2 bg-forest-800 text-white rounded-lg hover:bg-forest-700 shadow-sm flex items-center justify-center shrink-0"
               aria-label="Add to cart"
             >
               <ShoppingBag className="w-4 h-4" />

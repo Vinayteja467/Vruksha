@@ -25,8 +25,8 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="bg-cream-50/50 min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full card p-8 sm:p-10 space-y-6">
+    <div className="bg-cream-50/50 min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full card p-5 sm:p-8 space-y-6">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2.5 mb-2">
             <img src="/logo.png" alt="VRUKSHA" className="w-10 h-10 rounded-full object-cover shadow-xs" />

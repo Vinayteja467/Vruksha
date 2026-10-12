@@ -7,13 +7,21 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => {
     try {
       const saved = localStorage.getItem('ph_wishlist');
-      return saved ? JSON.parse(saved) : ['beetroot-powder', 'moringa-leaf-powder'];
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
   const { addToast } = useToast();
+
+  useEffect(() => {
+    const handleLogout = () => {
+      setWishlist([]);
+    };
+    window.addEventListener('auth:logout', handleLogout);
+    return () => window.removeEventListener('auth:logout', handleLogout);
+  }, []);
 
   useEffect(() => {
     try {

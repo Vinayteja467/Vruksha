@@ -20,18 +20,39 @@ import couponRoutes from './routes/couponRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import bulkRoutes from './routes/bulkRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-
-dotenv.config();
+import contactRoutes from './routes/contactRoutes.js';
+import { env } from './config/env.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT || 5000;
 
-// Middleware
+// Configured CORS Allowlist
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:5000',
+  env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS error: Origin ${origin} not permitted.`));
+    }
+  },
   credentials: true
 }));
-app.use(express.json({ limit: '15mb' }));
+
+// Body parsing with raw buffer preservation for Razorpay webhook verification
+app.use(express.json({
+  limit: '15mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
 // Health Check
@@ -53,6 +74,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/bulk-orders', bulkRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Serve static client assets in production if client/dist exists

@@ -82,41 +82,144 @@ export const CheckoutPage = () => {
     setLoading(true);
 
     try {
-      const orderPayload = {
+      const sanitizedItems = cartItems.map((item) => ({
+        product: item.product || item.slug,
+        size: item.size,
+        quantity: item.quantity
+      }));
+
+      const basePayload = {
         customerInfo: {
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone
+          fullName: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim()
         },
         shippingAddress: {
-          house: formData.house,
-          street: formData.street,
-          city: formData.city,
+          house: formData.house.trim(),
+          street: formData.street.trim(),
+          city: formData.city.trim(),
           state: formData.state,
-          pincode: formData.pincode
+          pincode: formData.pincode.trim()
         },
-        items: cartItems,
+        items: sanitizedItems,
         deliveryMethod: formData.deliveryMethod,
-        paymentMethod: formData.paymentMethod,
-        paymentStatus: formData.paymentMethod === 'cod' ? 'pending' : 'paid',
-        paymentId: formData.paymentMethod === 'cod' ? '' : `pay_rzp_${Date.now()}`,
-        subtotal,
-        discountAmount,
-        shippingFee: shippingFee + expressSurcharge,
-        couponApplied: appliedCoupon?.code || '',
-        total: finalTotal
+        couponCode: appliedCoupon?.code || '',
+        paymentMethod: formData.paymentMethod
       };
 
-      const res = await api.post('/orders', orderPayload);
+      // 1. Cash on Delivery Flow
+      if (formData.paymentMethod === 'cod') {
+        const res = await api.post('/orders', basePayload);
+        if (res.success && res.order) {
+          clearCart();
+          addToast('Order placed successfully with Cash on Delivery! 🎉', 'success');
+          navigate('/order-success', { state: { order: res.order } });
+        }
+        return;
+      }
 
-      if (res.success && res.order) {
-        clearCart();
-        addToast('Order placed successfully! 🎉', 'success');
-        navigate('/order-success', { state: { order: res.order } });
+      // 2. Online Payment Gateway (Razorpay / UPI / Card / NetBanking)
+      const rzpRes = await api.post('/payments/razorpay/create-order', {
+        items: sanitizedItems,
+        couponCode: appliedCoupon?.code || '',
+        deliveryMethod: formData.deliveryMethod
+      });
+
+      if (!rzpRes.success || !rzpRes.order) {
+        throw new Error('Unable to initialize secure payment gateway');
+      }
+
+      // Check if Razorpay script is loaded
+      let isRzpLoaded = !!window.Razorpay;
+      if (!isRzpLoaded) {
+        await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
+        isRzpLoaded = !!window.Razorpay;
+      }
+
+      if (isRzpLoaded && rzpRes.keyId && !rzpRes.isSimulated) {
+        const options = {
+          key: rzpRes.keyId,
+          amount: rzpRes.order.amount,
+          currency: 'INR',
+          name: 'VRUKSHA',
+          description: 'Farm To Home Order Checkout',
+          image: '/logo.png',
+          order_id: rzpRes.order.id,
+          prefill: {
+            name: formData.fullName,
+            email: formData.email,
+            contact: formData.phone
+          },
+          theme: {
+            color: '#1b4332'
+          },
+          handler: async function (response) {
+            try {
+              // Verify signature on server
+              const verifyRes = await api.post('/payments/razorpay/verify', {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              });
+
+              if (verifyRes.success) {
+                // Create confirmed order with verified payment ID
+                const confirmedOrderRes = await api.post('/orders', {
+                  ...basePayload,
+                  razorpay_payment_id: response.razorpay_payment_id
+                });
+
+                if (confirmedOrderRes.success && confirmedOrderRes.order) {
+                  clearCart();
+                  addToast('Payment verified & Order placed successfully! 🎉', 'success');
+                  navigate('/order-success', { state: { order: confirmedOrderRes.order } });
+                }
+              }
+            } catch (verErr) {
+              addToast(verErr.data?.message || 'Payment verification failed', 'error');
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setLoading(false);
+              addToast('Payment cancelled. Your cart items are preserved.', 'info');
+            }
+          }
+        };
+
+        const razorpayPaymentWindow = new window.Razorpay(options);
+        razorpayPaymentWindow.open();
+        return;
+      }
+
+      // Test Mode / Development Fallback Flow (when test placeholder keys are configured)
+      const mockPaymentId = `pay_rzp_test_${Date.now()}`;
+      const verifyRes = await api.post('/payments/razorpay/verify', {
+        razorpay_order_id: rzpRes.order.id,
+        razorpay_payment_id: mockPaymentId
+      });
+
+      if (verifyRes.success) {
+        const confirmedOrderRes = await api.post('/orders', {
+          ...basePayload,
+          razorpay_payment_id: mockPaymentId
+        });
+
+        if (confirmedOrderRes.success && confirmedOrderRes.order) {
+          clearCart();
+          addToast('Order placed successfully (Test Mode Gateway)! 🎉', 'success');
+          navigate('/order-success', { state: { order: confirmedOrderRes.order } });
+        }
       }
     } catch (err) {
       console.error('Order creation error', err);
-      addToast(err.data?.message || 'Failed to place order. Please try again.', 'error');
+      addToast(err.data?.message || err.message || 'Failed to place order. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -136,7 +239,7 @@ export const CheckoutPage = () => {
             {/* Left Column: Form Fields (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               {/* SECTION 1: Contact Information */}
-              <div className="card p-6 sm:p-8 space-y-4">
+              <div className="card p-4 sm:p-8 space-y-4">
                 <h3 className="font-serif font-bold text-lg text-forest-950 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-forest-800 text-cream-50 text-xs flex items-center justify-center font-sans">
                     1
@@ -193,7 +296,7 @@ export const CheckoutPage = () => {
               </div>
 
               {/* SECTION 2: Delivery Address */}
-              <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-4">
+              <div className="bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft space-y-4">
                 <h3 className="font-serif font-bold text-lg text-forest-950 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-forest-800 text-cream-50 text-xs flex items-center justify-center font-sans">
                     2
@@ -282,7 +385,7 @@ export const CheckoutPage = () => {
               </div>
 
               {/* SECTION 3: Delivery Speed */}
-              <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-3">
+              <div className="bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft space-y-3">
                 <h3 className="font-serif font-bold text-lg text-forest-950 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-forest-800 text-cream-50 text-xs flex items-center justify-center font-sans">
                     3
@@ -342,7 +445,7 @@ export const CheckoutPage = () => {
               </div>
 
               {/* SECTION 4: Payment Options */}
-              <div className="bg-white rounded-3xl border border-cream-200 p-6 sm:p-8 shadow-soft space-y-4">
+              <div className="bg-white rounded-3xl border border-cream-200 p-4 sm:p-8 shadow-soft space-y-4">
                 <h3 className="font-serif font-bold text-lg text-forest-950 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-forest-800 text-cream-50 text-xs flex items-center justify-center font-sans">
                     4
@@ -390,7 +493,7 @@ export const CheckoutPage = () => {
             </div>
 
             {/* Right Column: Order Summary (5 cols) */}
-            <div className="lg:col-span-5 card p-6 sm:p-8 space-y-6 sticky top-28">
+            <div className="lg:col-span-5 card p-4 sm:p-8 space-y-6 sticky top-28">
               <h3 className="font-serif font-bold text-xl text-forest-950 pb-3 border-b border-cream-100">
                 Order Summary ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
               </h3>
