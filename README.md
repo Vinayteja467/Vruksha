@@ -6,33 +6,6 @@ A production-ready, full-stack, responsive e-commerce platform for **VRUKSHA** (
 
 ---
 
-## 📋 Production Readiness Checklist (All 20 Photo Items Completed)
-
-| # | Item | Status | Implementation Details |
-|---|---|---|---|
-| **1** | **Real Login & Logout** | ✅ Complete | JWT auth tokens, automatic token renewal, 401 interceptors, full state cleanup on logout (`AuthContext.jsx`, `authRoutes.js`). |
-| **2** | **Password Reset** | ✅ Complete | Secure 6-digit OTP reset flow with 30-min expiry, dev OTP preview, and change password form (`ForgotPasswordPage.jsx`, `/api/auth/reset-password`). |
-| **3** | **Email Verification** | ✅ Complete | Email verification flow, status badges, verification OTP endpoints, and dedicated verification page (`VerifyEmailPage.jsx`, `/api/auth/verify-email`). |
-| **4** | **Loading States** | ✅ Complete | Skeleton loaders for product cards, orders, and tables, plus spinner and disabled states on all submit buttons (`Skeleton.jsx`). |
-| **5** | **Empty States** | ✅ Complete | Beautiful reusable empty state displays for Cart, Orders, Wishlist, and Admin tables (`EmptyState.jsx`). |
-| **6** | **Clear Error Messages** | ✅ Complete | Contextual toast notifications, descriptive server error payloads, and inline form error labels across all forms. |
-| **7** | **Form Validation** | ✅ Complete | Real-time client-side validation for RFC emails, Indian 10-digit mobile numbers, password strength, and pincodes (`validation.js`). |
-| **8** | **Rate Limiting** | ✅ Complete | In-memory sliding window rate limiter: 15 req/15min for auth routes, 120 req/min for general API (`rateLimiter.js`). |
-| **9** | **Database Backups** | ✅ Complete | Automated CLI backup and restore scripts plus admin backup trigger (`npm run db:backup`, `server/scripts/backup.js`). |
-| **10** | **Row Level Security** | ✅ Complete | Strict IDOR protection on orders, user profiles, and addresses; strict `adminOnly` guards on admin endpoints. |
-| **11** | **API Keys Off Frontend** | ✅ Complete | Secrets (`JWT_SECRET`, `MONGO_URI`, `RAZORPAY_SECRET`) are strictly backend-only. Frontend uses `client/.env.example`. |
-| **12** | **Mobile Layout** | ✅ Complete | 100% responsive design with sticky mobile bottom navigation bar (`MobileBottomNav.jsx`), touch-friendly 44px+ hit targets. |
-| **13** | **Custom 404 Page** | ✅ Complete | Farm-to-home themed 404 page with quick category links and home navigation (`NotFoundPage.jsx`). |
-| **14** | **Analytics Installed** | ✅ Complete | Event tracking engine for page views, `view_item`, `add_to_cart`, `begin_checkout`, `purchase`, and search (`analytics.js`). |
-| **15** | **Error Tracking** | ✅ Complete | React `ErrorBoundary` with fallback screen and automatic client telemetry error reporting to `/api/error-log`. |
-| **16** | **Privacy Policy Page** | ✅ Complete | Full legal privacy policy with DPDP compliance, cookies, payment processing, and data rights (`PrivacyPolicyPage.jsx`). |
-| **17** | **Terms Page** | ✅ Complete | Comprehensive terms and conditions covering pricing, delivery, returns, and intellectual property (`TermsPage.jsx`). |
-| **18** | **Delete Account Button** | ✅ Complete | "Danger Zone" in user settings with "Type DELETE" modal confirmation and backend endpoint (`DELETE /api/auth/delete-account`). |
-| **19** | **Onboarding Flow** | ✅ Complete | Interactive welcome modal for first-time visitors with farm purity promise and coupon `WELCOME10` (`OnboardingModal.jsx`). |
-| **20** | **Check Caption / Vercel Deploy** | ✅ Complete | Root `vercel.json` SPA configuration, Vercel Serverless Function bridge (`api/index.js`), and `client/vercel.json`. |
-
----
-
 ## 🌟 Key Features
 
 - **Botanical Brand Aesthetics**: Forest green, warm cream, serif typography with Playfair Display.
@@ -85,20 +58,6 @@ WHATSAPP_PHONE_NUMBER=919573636998
 npm run dev
 ```
 Open `http://localhost:3000` in your browser.
-
----
-
-## 💾 Database Backup & Disaster Recovery
-
-```bash
-# Create a timestamped JSON snapshot of all collections
-npm run db:backup
-
-# Restore from the latest snapshot
-npm run db:restore
-```
-
-Snapshots are saved under `server/backups/`.
 
 ---
 

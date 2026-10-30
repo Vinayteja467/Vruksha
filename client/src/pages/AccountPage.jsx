@@ -12,18 +12,12 @@ import {
   Clock,
   ArrowRight,
   ShieldCheck,
-  Plus,
-  Trash2,
-  MailCheck,
-  AlertTriangle,
-  Loader2
+  Plus
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
-import { useToast } from '../context/ToastContext';
 import { formatPrice, formatDate } from '../utils/formatters';
 import { api } from '../api/client';
-import { EmptyState } from '../components/common/EmptyState';
 
 export const AccountPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -56,73 +50,6 @@ export const AccountPage = () => {
     pincode: '',
     isDefault: false
   });
-
-  // Password Change State
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [updatingPassword, setUpdatingPassword] = useState(false);
-
-  // Delete Account State
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteConfirmationInput, setDeleteConfirmationInput] = useState('');
-  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
-
-  const { addToast } = useToast();
-
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      addToast('Please enter your current password', 'error');
-      return;
-    }
-    if (newPassword.length < 6) {
-      addToast('New password must be at least 6 characters long', 'error');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      addToast('New passwords do not match', 'error');
-      return;
-    }
-
-    setUpdatingPassword(true);
-    try {
-      const res = await api.put('/auth/change-password', {
-        currentPassword,
-        newPassword
-      });
-      if (res.success) {
-        addToast('Password updated successfully!', 'success');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-      }
-    } catch (err) {
-      addToast(err.data?.message || err.message || 'Failed to update password', 'error');
-    } finally {
-      setUpdatingPassword(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    if (deleteConfirmationInput.trim() !== 'DELETE') {
-      addToast('Please type "DELETE" to confirm account deletion', 'error');
-      return;
-    }
-
-    setIsDeletingAccount(true);
-    try {
-      const res = await api.delete('/auth/delete-account');
-      if (res.success) {
-        addToast('Your account has been deleted.', 'info');
-        logout();
-        navigate('/');
-      }
-    } catch (err) {
-      addToast(err.data?.message || err.message || 'Failed to delete account', 'error');
-      setIsDeletingAccount(false);
-    }
-  };
 
   useEffect(() => {
     if (searchParams.get('tab')) {
@@ -233,23 +160,7 @@ export const AccountPage = () => {
                   </span>
                 )}
               </div>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <p className="text-xs text-stone-500">{user?.email}</p>
-                {user?.isVerified ? (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>Verified Account</span>
-                  </span>
-                ) : (
-                  <Link
-                    to="/verify-email"
-                    className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 hover:bg-amber-200 transition"
-                  >
-                    <MailCheck className="w-3 h-3" />
-                    <span>Unverified — Verify Email</span>
-                  </Link>
-                )}
-              </div>
+              <p className="text-xs text-stone-500 mt-0.5">{user?.email}</p>
             </div>
           </div>
 
@@ -386,13 +297,17 @@ export const AccountPage = () => {
                 {loadingOrders ? (
                   <p className="text-xs text-stone-500 py-6">Loading orders...</p>
                 ) : orders.length === 0 ? (
-                  <EmptyState
-                    icon={Package}
-                    title="No orders placed yet"
-                    description="When you place an order, it will appear here with real-time shipment updates."
-                    actionText="Start Shopping"
-                    actionLink="/shop"
-                  />
+                  <div className="text-center py-12">
+                    <Package className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+                    <p className="font-serif font-bold text-lg text-forest-950">No orders placed yet</p>
+                    <p className="text-xs text-stone-500 mb-4">When you place an order, it will appear here with live tracking.</p>
+                    <Link
+                      to="/shop"
+                      className="px-5 py-2.5 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-block"
+                    >
+                      Start Shopping
+                    </Link>
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     {orders.map((ord) => (
@@ -565,13 +480,17 @@ export const AccountPage = () => {
                 </div>
 
                 {wishlistProducts.length === 0 ? (
-                  <EmptyState
-                    icon={Heart}
-                    title="Your wishlist is empty"
-                    description="Tap the heart icon on any fresh farm product to save it here for later."
-                    actionText="Browse Products"
-                    actionLink="/shop"
-                  />
+                  <div className="text-center py-12">
+                    <Heart className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+                    <p className="font-serif font-bold text-lg text-forest-950">Your wishlist is empty</p>
+                    <p className="text-xs text-stone-500 mb-4">Tap the heart icon on any product card to save it here.</p>
+                    <Link
+                      to="/shop"
+                      className="px-5 py-2.5 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-block"
+                    >
+                      Browse Products
+                    </Link>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {wishlistProducts.map((p) => (
@@ -601,144 +520,40 @@ export const AccountPage = () => {
 
             {/* SECURITY / SETTINGS TAB */}
             {activeTab === 'settings' && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div>
                   <h3 className="font-serif text-2xl font-bold text-forest-950">Security & Privacy</h3>
-                  <p className="text-xs text-stone-500 mt-1">Manage password, session security, and account deletion</p>
+                  <p className="text-xs text-stone-500 mt-1">Manage password and account privacy credentials</p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-forest-50 border border-forest-100 flex items-center gap-3">
                   <ShieldCheck className="w-6 h-6 text-forest-700 flex-shrink-0" />
                   <div>
                     <p className="text-xs font-bold text-forest-950">Account Security Status: High</p>
-                    <p className="text-[11px] text-forest-700">Authenticated via secure JWT encryption with rate-limited protection.</p>
+                    <p className="text-[11px] text-forest-700">Authenticated via secure JWT bearer encryption.</p>
                   </div>
                 </div>
 
-                {/* Real Password Change Form */}
-                <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md pt-2">
+                <div className="space-y-4 max-w-md pt-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-forest-800">Change Password</h4>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-600 mb-1">Current Password</label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter your current password"
-                      required
-                      className="input text-xs p-3 w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-600 mb-1">New Password</label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Minimum 6 characters"
-                      required
-                      className="input text-xs p-3 w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-stone-600 mb-1">Confirm New Password</label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Re-enter new password"
-                      required
-                      className="input text-xs p-3 w-full"
-                    />
-                  </div>
+                  <input
+                    type="password"
+                    placeholder="Enter current password"
+                    className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Enter new password (min 6 characters)"
+                    className="w-full text-xs p-3 rounded-xl border border-cream-300 bg-white"
+                  />
                   <button
-                    type="submit"
-                    disabled={updatingPassword}
-                    className="btn-primary py-3 px-6 text-xs uppercase tracking-wider flex items-center gap-2 disabled:opacity-50"
+                    type="button"
+                    onClick={() => alert('Password update requested. In production, an email confirmation will be dispatched.')}
+                    className="px-5 py-2.5 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
                   >
-                    {updatingPassword ? (
-                      <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Updating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShieldCheck className="w-4 h-4" />
-                        <span>Update Password</span>
-                      </>
-                    )}
+                    Update Password
                   </button>
-                </form>
-
-                {/* Danger Zone: Delete Account */}
-                <div className="pt-6 border-t border-cream-200">
-                  <div className="p-5 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-3 max-w-xl">
-                    <div className="flex items-center gap-2.5 text-rose-800">
-                      <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-                      <h4 className="text-xs font-bold uppercase tracking-wider">Danger Zone — Delete Account</h4>
-                    </div>
-                    <p className="text-xs text-rose-700/90 leading-relaxed">
-                      Permanently delete your VRUKSHA account, order history, and saved delivery addresses. This action cannot be undone.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDeleteConfirmationInput('');
-                        setShowDeleteModal(true);
-                      }}
-                      className="px-4 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-rose-700 transition flex items-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Delete My Account</span>
-                    </button>
-                  </div>
                 </div>
-
-                {/* Delete Confirmation Modal */}
-                {showDeleteModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-                    <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl border border-rose-200">
-                      <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-                        <Trash2 className="w-6 h-6" />
-                      </div>
-                      <h3 className="font-serif text-xl font-bold text-stone-900 text-center">
-                        Are you absolutely sure?
-                      </h3>
-                      <p className="text-xs text-stone-600 leading-relaxed text-center">
-                        This action will immediately erase your profile, saved addresses, and account credentials.
-                        To confirm, please type <strong className="font-mono text-rose-600">DELETE</strong> below:
-                      </p>
-                      <input
-                        type="text"
-                        value={deleteConfirmationInput}
-                        onChange={(e) => setDeleteConfirmationInput(e.target.value)}
-                        placeholder="Type DELETE to confirm"
-                        className="input text-center font-mono uppercase tracking-widest text-xs p-3 w-full"
-                      />
-                      <div className="flex gap-3 pt-2">
-                        <button
-                          type="button"
-                          onClick={() => setShowDeleteModal(false)}
-                          className="btn-secondary flex-1 py-3 text-xs uppercase tracking-wider"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          disabled={deleteConfirmationInput.trim() !== 'DELETE' || isDeletingAccount}
-                          onClick={handleDeleteAccount}
-                          className="px-4 py-3 rounded-xl bg-rose-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-rose-700 disabled:opacity-40 flex-1 flex items-center justify-center gap-2 transition"
-                        >
-                          {isDeletingAccount ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <span>Confirm Delete</span>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>

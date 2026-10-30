@@ -227,52 +227,6 @@ class InMemoryStore {
     return safeUser;
   }
 
-  async updateUserPassword(id, newPassword) {
-    const user = this.users.find(u => u.id === id);
-    if (!user) return null;
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-    return true;
-  }
-
-  async deleteUser(id) {
-    const initialLen = this.users.length;
-    this.users = this.users.filter(u => u.id !== id);
-    return this.users.length < initialLen;
-  }
-
-  async setResetToken(email, token, expires) {
-    const user = this.users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (!user) return false;
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = expires;
-    return true;
-  }
-
-  async findByResetToken(token) {
-    const now = Date.now();
-    return this.users.find(
-      u => u.resetPasswordToken === token && u.resetPasswordExpires && new Date(u.resetPasswordExpires).getTime() > now
-    );
-  }
-
-  async setVerificationCode(id, code, expires) {
-    const user = this.users.find(u => u.id === id);
-    if (!user) return false;
-    user.verificationCode = code;
-    user.verificationExpires = expires;
-    return true;
-  }
-
-  async verifyUserEmail(id) {
-    const user = this.users.find(u => u.id === id);
-    if (!user) return false;
-    user.isVerified = true;
-    user.verificationCode = null;
-    user.verificationExpires = null;
-    return true;
-  }
-
   // Product Operations
   getProducts({ category, search, minPrice, maxPrice, rating, sort, inStock, limit, page = 1 }) {
     let list = [...this.products];

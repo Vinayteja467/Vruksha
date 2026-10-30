@@ -68,18 +68,3 @@ export const getCustomers = async (req, res, next) => {
     next(err);
   }
 };
-
-export const triggerBackup = async (req, res, next) => {
-  try {
-    const { createDatabaseBackup } = await import('../../scripts/backup.js');
-    const result = await createDatabaseBackup();
-    res.json({
-      success: true,
-      message: 'Database backup snapshot successfully generated',
-      backupFile: result.fileName
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-

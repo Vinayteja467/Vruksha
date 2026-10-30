@@ -18,11 +18,6 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: '' },
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
-  isVerified: { type: Boolean, default: false },
-  verificationCode: { type: String },
-  verificationExpires: { type: Date },
-  resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date },
   addresses: [addressSchema],
   wishlist: [{ type: String }],
   createdAt: { type: Date, default: Date.now }
