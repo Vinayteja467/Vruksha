@@ -14,14 +14,29 @@ export const apiFetch = async (endpoint, options = {}) => {
     headers,
   });
 
-  const data = await response.json();
+  let data;
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+  } else {
+    const text = await response.text();
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text || `HTTP ${response.status} ${response.statusText}` };
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 401) {
       localStorage.removeItem('ph_token');
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
-    const error = new Error(data.message || 'Something went wrong with the API request');
+    const error = new Error(data?.message || `API error (${response.status})`);
     error.status = response.status;
     error.data = data;
     throw error;

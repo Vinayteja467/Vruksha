@@ -57,6 +57,14 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
+// Normalize URL in case Vercel rewrites strip or alter the /api prefix
+app.use((req, res, next) => {
+  if (req.url && !req.url.startsWith('/api')) {
+    req.url = '/api' + (req.url.startsWith('/') ? req.url : `/${req.url}`);
+  }
+  next();
+});
+
 // Apply general API rate limiter to all /api routes
 app.use('/api', apiRateLimiter);
 
