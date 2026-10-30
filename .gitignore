@@ -1,4 +1,4 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 */node_modules/
 .pnp
@@ -31,3 +31,7 @@ yarn-error.log*
 # OS Generated
 .DS_Store
 Thumbs.db
+
+# Database Backups
+server/backups/
+

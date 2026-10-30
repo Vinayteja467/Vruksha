@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Mail, ArrowRight } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { validateLogin } from '../utils/validation';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,6 +18,14 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { isValid, errors } = validateLogin({ email, password });
+    if (!isValid) {
+      setFormErrors(errors);
+      return;
+    }
+    setFormErrors({});
+
     setLoading(true);
     const result = await login(email, password);
     setLoading(false);
@@ -47,12 +57,23 @@ export const LoginPage = () => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (formErrors.email) setFormErrors({ ...formErrors, email: '' });
+                }}
                 placeholder="Enter your email address"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.email ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.email && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.email}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -60,21 +81,35 @@ export const LoginPage = () => {
               <label className="text-xs font-bold uppercase tracking-wider text-forest-800">
                 Password
               </label>
-              <span className="text-[11px] text-stone-400 cursor-pointer hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-[11px] text-forest-800 hover:underline font-semibold"
+              >
                 Forgot password?
-              </span>
+              </Link>
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (formErrors.password) setFormErrors({ ...formErrors, password: '' });
+                }}
                 placeholder="Enter your password"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.password ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.password && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.password}</span>
+              </p>
+            )}
           </div>
 
           <button
@@ -82,8 +117,17 @@ export const LoginPage = () => {
             disabled={loading}
             className="btn-primary w-full py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
           >
-            <span>{loading ? 'SIGNING IN...' : 'SIGN IN'}</span>
-            <ArrowRight className="w-4 h-4" />
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>SIGNING IN...</span>
+              </>
+            ) : (
+              <>
+                <span>SIGN IN</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </form>
 

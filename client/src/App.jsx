@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // Providers
@@ -7,13 +7,19 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
 
-// Common Components
+// Common Components & Shell
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import { CartDrawer } from './components/cart/CartDrawer';
 import { WhatsAppFloatingWidget } from './components/floating/WhatsAppFloatingWidget';
 import { ScrollToTop } from './components/floating/ScrollToTop';
+import { MobileBottomNav } from './components/common/MobileBottomNav';
+import { OnboardingModal } from './components/common/OnboardingModal';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ProtectedRoute, AdminRoute, PublicOnlyRoute } from './components/common/RouteGuards';
+
+// Utilities
+import { analytics } from './utils/analytics';
 
 // Storefront Pages
 import { HomePage } from './pages/HomePage';
@@ -25,12 +31,15 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { AccountPage } from './pages/AccountPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { BulkOrdersPage } from './pages/BulkOrdersPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
 import { FAQPage } from './pages/FAQPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 // Legal Policies
 import { PrivacyPolicyPage } from './pages/Policies/PrivacyPolicyPage';
@@ -54,12 +63,18 @@ const MainContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
+  // Track page views on route transitions (Item 14)
+  useEffect(() => {
+    analytics.trackPageView(location.pathname);
+  }, [location.pathname]);
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen pb-14 md:pb-0">
       {!isAdminRoute && <Navbar />}
       {!isAdminRoute && <CartDrawer />}
       {!isAdminRoute && <WhatsAppFloatingWidget />}
-      
+      {!isAdminRoute && <OnboardingModal />}
+
       <main className="flex-grow">
         <Routes>
           {/* Storefront Routes */}
@@ -93,6 +108,15 @@ const MainContent = () => {
               </PublicOnlyRoute>
             }
           />
+          <Route
+            path="/forgot-password"
+            element={
+              <PublicOnlyRoute>
+                <ForgotPasswordPage />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route
             path="/account"
             element={
@@ -138,28 +162,34 @@ const MainContent = () => {
             <Route path="reviews" element={<AdminReviewsPage />} />
             <Route path="bulk-orders" element={<AdminBulkOrdersPage />} />
           </Route>
+
+          {/* 404 Catch-All Route (Item 13) */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
 
       {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <MobileBottomNav />}
     </div>
   );
 };
 
 export function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <Router>
-              <ScrollToTop />
-              <MainContent />
-            </Router>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
-    </ToastProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Router>
+                <ScrollToTop />
+                <MainContent />
+              </Router>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorBoundary>
   );
 }
 

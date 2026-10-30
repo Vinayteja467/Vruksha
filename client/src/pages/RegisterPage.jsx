@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { User, Mail, Phone, Lock, ArrowRight, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { validateRegistration, getPasswordStrength } from '../utils/validation';
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export const RegisterPage = () => {
     password: '',
     confirmPassword: ''
   });
+  const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const { register } = useAuth();
@@ -19,19 +21,28 @@ export const RegisterPage = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: '' });
+    }
   };
+
+  const passwordStrength = getPasswordStrength(formData.password);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      addToast('Passwords do not match', 'error');
+    const { isValid, errors } = validateRegistration(formData);
+    if (!isValid) {
+      setFormErrors(errors);
+      addToast('Please correct the highlighted fields', 'error');
       return;
     }
 
-    if (formData.password.length < 6) {
-      addToast('Password must be at least 6 characters', 'error');
+    if (formData.password !== formData.confirmPassword) {
+      setFormErrors({ ...errors, confirmPassword: 'Passwords do not match' });
+      addToast('Passwords do not match', 'error');
       return;
     }
 
@@ -75,9 +86,17 @@ export const RegisterPage = () => {
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.name ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.name && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.name}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -93,9 +112,17 @@ export const RegisterPage = () => {
                 onChange={handleChange}
                 placeholder="Enter your email address"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.email ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.email && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.email}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -109,10 +136,18 @@ export const RegisterPage = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Enter your 10-digit mobile number"
-                className="input pl-10 pr-3 text-xs py-3"
+                placeholder="10-digit mobile number"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.phone ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.phone && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.phone}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -128,9 +163,30 @@ export const RegisterPage = () => {
                 onChange={handleChange}
                 placeholder="Create a password (min 6 characters)"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.password ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formData.password && (
+              <div className="mt-1.5 flex items-center gap-2">
+                <div className="h-1 flex-1 bg-cream-200 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${passwordStrength.color} transition-all duration-300`}
+                    style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-bold text-stone-500">
+                  {passwordStrength.label}
+                </span>
+              </div>
+            )}
+            {formErrors.password && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.password}</span>
+              </p>
+            )}
           </div>
 
           <div>
@@ -146,9 +202,17 @@ export const RegisterPage = () => {
                 onChange={handleChange}
                 placeholder="Confirm your password"
                 required
-                className="input pl-10 pr-3 text-xs py-3"
+                className={`input pl-10 pr-3 text-xs py-3 ${
+                  formErrors.confirmPassword ? 'border-rose-400 focus:ring-rose-200' : ''
+                }`}
               />
             </div>
+            {formErrors.confirmPassword && (
+              <p className="text-[11px] text-rose-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>{formErrors.confirmPassword}</span>
+              </p>
+            )}
           </div>
 
           <button
@@ -156,8 +220,17 @@ export const RegisterPage = () => {
             disabled={loading}
             className="btn-primary w-full py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
           >
-            <span>{loading ? 'CREATING ACCOUNT...' : 'REGISTER'}</span>
-            <ArrowRight className="w-4 h-4" />
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>CREATING ACCOUNT...</span>
+              </>
+            ) : (
+              <>
+                <span>REGISTER</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </form>
 

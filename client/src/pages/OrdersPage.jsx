@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { Package, Truck, Calendar, CheckCircle2, Clock, AlertCircle, ArrowLeft, ChevronDown } from 'lucide-react';
 import { formatPrice, formatDate, formatDateTime } from '../utils/formatters';
 import { api } from '../api/client';
-
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { OrderCardSkeleton } from '../components/common/Skeleton';
+import { EmptyState } from '../components/common/EmptyState';
 
 export const OrdersPage = () => {
   const { user } = useAuth();
@@ -66,21 +67,19 @@ export const OrdersPage = () => {
         </div>
 
         {loading ? (
-          <div className="bg-white p-12 rounded-3xl border border-cream-200 text-center text-xs text-stone-500">
-            Loading order histories...
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <OrderCardSkeleton />
+            <OrderCardSkeleton />
           </div>
         ) : orders.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border border-cream-200 text-center max-w-md mx-auto space-y-4 shadow-soft">
-            <Package className="w-12 h-12 text-stone-300 mx-auto" />
-            <h2 className="font-serif text-xl font-bold text-forest-950">No orders placed yet</h2>
-            <p className="text-xs text-stone-500">Discover our collection of 100% natural products for everyday wellness.</p>
-            <Link
-              to="/shop"
-              className="inline-block px-6 py-3 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
-            >
-              Shop Now
-            </Link>
-          </div>
+          <EmptyState
+            icon={Package}
+            title="No orders placed yet"
+            description="Discover our collection of 100% natural, farm-sourced cold pressed oils, powders, and pure honey."
+            actionText="Shop Now"
+            actionLink="/shop"
+            className="bg-white rounded-3xl border border-cream-200 shadow-soft"
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Orders List (5 cols) */}

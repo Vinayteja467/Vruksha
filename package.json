@@ -6,11 +6,18 @@
   "scripts": {
     "start": "node server/src/server.js",
     "build": "npm run build --prefix client",
+    "vercel-build": "npm run build --prefix client",
+    "db:backup": "node server/scripts/backup.js",
+    "db:restore": "node server/scripts/restore.js",
     "install-all": "npm install && npm install --prefix server && npm install --prefix client",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "devDependencies": {
     "concurrently": "^9.1.2"
   }

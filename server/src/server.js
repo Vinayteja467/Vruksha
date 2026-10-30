@@ -6,6 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
+import { apiRateLimiter } from './middleware/rateLimiter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,10 +38,11 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps, curl, or same-origin)
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS error: Origin ${origin} not permitted.`));
+      callback(null, true); // Permissive in fallback for preview deployments
     }
   },
   credentials: true
@@ -55,14 +57,30 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ limit: '15mb', extended: true }));
 
+// Apply general API rate limiter to all /api routes
+app.use('/api', apiRateLimiter);
+
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     brand: 'VRUKSHA',
     tagline: 'Farm To Home',
+    environment: env.NODE_ENV,
     timestamp: new Date().toISOString()
   });
+});
+
+// Client Error Logging Telemetry (Item 15)
+app.post('/api/error-log', (req, res) => {
+  const { message, stack, url, info, timestamp } = req.body || {};
+  console.error(`🚨 [Client Error Log ${timestamp || new Date().toISOString()}]:`, {
+    message,
+    url,
+    info,
+    ip: req.ip
+  });
+  res.json({ success: true, recorded: true });
 });
 
 // Mount Routes
@@ -92,13 +110,18 @@ if (fs.existsSync(clientDist)) {
 app.use(notFound);
 app.use(errorHandler);
 
-// Start Server
-const startServer = async () => {
+// Start Server helper
+export const startServer = async () => {
   await connectDB();
-  app.listen(PORT, () => {
+  return app.listen(PORT, () => {
     console.log(`🌿 [VRUKSHA] Backend server running on port ${PORT}`);
     console.log(`🔗 Health check available at http://localhost:${PORT}/api/health`);
   });
 };
 
-startServer();
+// Auto-start when executed directly and not inside serverless runtime
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+  startServer();
+}
+
+export default app;
