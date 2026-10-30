@@ -47,6 +47,21 @@ app.use(cors({
   },
   credentials: true
 }));
+app.options('*', cors());
+
+// Ensure MongoDB connection in Serverless environments
+let isServerlessDbConnected = false;
+app.use(async (req, res, next) => {
+  if (!isServerlessDbConnected && process.env.VERCEL) {
+    try {
+      await connectDB();
+      isServerlessDbConnected = true;
+    } catch (err) {
+      console.warn('⚠️ Serverless DB connect warning:', err.message);
+    }
+  }
+  next();
+});
 
 // Body parsing with raw buffer preservation for Razorpay webhook verification
 app.use(express.json({
