@@ -1,0 +1,115 @@
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+
+export const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const rawFrom = location.state?.from?.pathname;
+  const from = (rawFrom && rawFrom !== '/login' && rawFrom !== '/register') ? rawFrom : '/account';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setLoading(true);
+    const result = await login(email, password);
+    setLoading(false);
+    if (result?.success) {
+      navigate(from, { replace: true });
+    } else {
+      setErrorMessage(result?.message || 'Invalid email or password');
+    }
+  };
+
+  return (
+    <div className="bg-cream-50/50 min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full card p-5 sm:p-8 space-y-6">
+        <div className="text-center">
+          <Link to="/" className="inline-flex items-center gap-2.5 mb-2">
+            <img src="/logo.png" alt="VRUKSHA" className="w-10 h-10 rounded-full object-cover shadow-xs" />
+            <span className="font-serif text-2xl font-bold text-forest-950">VRUKSHA</span>
+          </Link>
+          <h2 className="font-serif text-2xl font-bold text-forest-950">Welcome Back</h2>
+          <p className="text-xs text-stone-500 mt-1">Sign in to manage orders, wishlist, and saved addresses</p>
+        </div>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-forest-800 mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMessage('');
+                }}
+                placeholder="Enter your email address"
+                required
+                className="input pl-10 pr-3 text-xs py-3"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold uppercase tracking-wider text-forest-800">
+                Password
+              </label>
+            </div>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage('');
+                }}
+                placeholder="Enter your password"
+                required
+                className="input pl-10 pr-3 text-xs py-3"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full py-3.5 uppercase tracking-widest text-xs shadow-glow flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+          >
+            <span>{loading ? 'SIGNING IN...' : 'SIGN IN'}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </form>
+
+        <div className="text-center text-xs text-stone-500 pt-2 border-t border-cream-100">
+          Don't have an account yet?{' '}
+          <Link to="/register" className="font-bold text-forest-800 hover:underline">
+            Register here
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
