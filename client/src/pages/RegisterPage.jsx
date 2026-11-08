@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { User, Mail, Phone, Lock, ArrowRight, AlertCircle } from 'lucide-react';
+=======
+import { User, Mail, Phone, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -13,7 +17,10 @@ export const RegisterPage = () => {
     confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState('');
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
 
   const { register } = useAuth();
   const { addToast } = useToast();
@@ -21,40 +28,63 @@ export const RegisterPage = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+<<<<<<< HEAD
     setErrorMessage('');
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     setErrorMessage('');
 
     if (formData.password !== formData.confirmPassword) {
       const err = 'Passwords do not match';
       setErrorMessage(err);
       addToast(err, 'error');
+=======
+
+    if (formData.password !== formData.confirmPassword) {
+      addToast('Passwords do not match', 'error');
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
       return;
     }
 
     if (formData.password.length < 6) {
+<<<<<<< HEAD
       const err = 'Password must be at least 6 characters';
       setErrorMessage(err);
       addToast(err, 'error');
+=======
+      addToast('Password must be at least 6 characters', 'error');
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
       return;
     }
 
     setLoading(true);
     const result = await register({
+<<<<<<< HEAD
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
       phone: formData.phone.trim(),
+=======
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
       password: formData.password
     });
     setLoading(false);
 
     if (result?.success) {
+<<<<<<< HEAD
       navigate('/account', { replace: true });
     } else {
       setErrorMessage(result?.message || 'Registration failed');
+=======
+      navigate('/account');
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     }
   };
 
@@ -70,6 +100,7 @@ export const RegisterPage = () => {
           <p className="text-xs text-stone-500 mt-1">Join the pure living community for fast checkout and offers</p>
         </div>
 
+<<<<<<< HEAD
         {/* Error Message */}
         {errorMessage && (
           <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
@@ -78,6 +109,8 @@ export const RegisterPage = () => {
           </div>
         )}
 
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-forest-800 mb-1">

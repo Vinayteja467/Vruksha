@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -8,6 +9,9 @@ const __dirname = path.dirname(__filename);
 // Load .env from both project root and server directory
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+=======
+import dotenv from 'dotenv';
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
 dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';

@@ -32,7 +32,11 @@ export const apiFetch = async (endpoint, options = {}) => {
   }
 
   if (!response.ok) {
+<<<<<<< HEAD
     if (response.status === 401 && !endpoint.includes('/auth/login')) {
+=======
+    if (response.status === 401) {
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
       localStorage.removeItem('ph_token');
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }

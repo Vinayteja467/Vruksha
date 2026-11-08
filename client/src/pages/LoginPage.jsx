@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+<<<<<<< HEAD
 import { Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
+=======
+import { Lock, Mail, ArrowRight } from 'lucide-react';
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
 import { useAuth } from '../context/AuthContext';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const [errorMessage, setErrorMessage] = useState('');
 
   const { login } = useAuth();
@@ -19,13 +24,27 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+=======
+
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || '/account';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     setLoading(true);
     const result = await login(email, password);
     setLoading(false);
     if (result?.success) {
       navigate(from, { replace: true });
+<<<<<<< HEAD
     } else {
       setErrorMessage(result?.message || 'Invalid email or password');
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     }
   };
 
@@ -41,6 +60,7 @@ export const LoginPage = () => {
           <p className="text-xs text-stone-500 mt-1">Sign in to manage orders, wishlist, and saved addresses</p>
         </div>
 
+<<<<<<< HEAD
         {/* Error Message */}
         {errorMessage && (
           <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
@@ -49,6 +69,8 @@ export const LoginPage = () => {
           </div>
         )}
 
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -60,10 +82,14 @@ export const LoginPage = () => {
               <input
                 type="email"
                 value={email}
+<<<<<<< HEAD
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setErrorMessage('');
                 }}
+=======
+                onChange={(e) => setEmail(e.target.value)}
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
                 placeholder="Enter your email address"
                 required
                 className="input pl-10 pr-3 text-xs py-3"
@@ -76,16 +102,26 @@ export const LoginPage = () => {
               <label className="text-xs font-bold uppercase tracking-wider text-forest-800">
                 Password
               </label>
+<<<<<<< HEAD
+=======
+              <span className="text-[11px] text-stone-400 cursor-pointer hover:underline">
+                Forgot password?
+              </span>
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
             </div>
             <div className="relative">
               <Lock className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="password"
                 value={password}
+<<<<<<< HEAD
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setErrorMessage('');
                 }}
+=======
+                onChange={(e) => setPassword(e.target.value)}
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
                 placeholder="Enter your password"
                 required
                 className="input pl-10 pr-3 text-xs py-3"

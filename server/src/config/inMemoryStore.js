@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -72,6 +73,14 @@ class InMemoryStore {
       ];
       this.savePersistedUsers();
     }
+=======
+import bcrypt from 'bcryptjs';
+import { products as seedProducts, categories as seedCategories, coupons as seedCoupons, sampleReviews } from '../data/seedData.js';
+
+class InMemoryStore {
+  constructor() {
+    this.users = [];
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     this.products = [...seedProducts];
     this.categories = [...seedCategories];
     this.orders = [];
@@ -83,6 +92,63 @@ class InMemoryStore {
   }
 
   async initializeDefaults() {
+<<<<<<< HEAD
+=======
+    // Hash demo passwords
+    const salt = await bcrypt.genSalt(10);
+    const adminHash = await bcrypt.hash('Admin@123', salt);
+    const userHash = await bcrypt.hash('User@123', salt);
+
+    this.users = [
+      {
+        id: 'usr-admin-01',
+        name: 'PureHarvest Admin',
+        email: 'admin@pureharvest.in',
+        phone: '9876543210',
+        password: adminHash,
+        role: 'admin',
+        addresses: [
+          {
+            id: 'addr-01',
+            fullName: 'HQ Admin Office',
+            phone: '9876543210',
+            house: 'No. 42, Green Orchard Estate',
+            street: 'MG Road, Indiranagar',
+            city: 'Bengaluru',
+            state: 'Karnataka',
+            pincode: '560038',
+            isDefault: true
+          }
+        ],
+        wishlist: ['beetroot-powder', 'moringa-leaf-powder'],
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'usr-demo-02',
+        name: 'Aarav Patel',
+        email: 'user@pureharvest.in',
+        phone: '9812345678',
+        password: userHash,
+        role: 'user',
+        addresses: [
+          {
+            id: 'addr-02',
+            fullName: 'Aarav Patel',
+            phone: '9812345678',
+            house: 'Flat 402, Lotus Residency',
+            street: '14th Cross, Bandra West',
+            city: 'Mumbai',
+            state: 'Maharashtra',
+            pincode: '400050',
+            isDefault: true
+          }
+        ],
+        wishlist: ['amla-powder'],
+        createdAt: new Date().toISOString()
+      }
+    ];
+
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     // Seed 2 initial sample orders
     this.orders = [
       {
@@ -202,6 +268,7 @@ class InMemoryStore {
     ];
   }
 
+<<<<<<< HEAD
   loadPersistedUsers() {
     try {
       if (fs.existsSync(PERSISTED_USERS_FILE)) {
@@ -234,6 +301,11 @@ class InMemoryStore {
       if (Array.isArray(u.aliases) && u.aliases.map(a => a.toLowerCase()).includes(cleanEmail)) return true;
       return false;
     });
+=======
+  // User Operations
+  async findUserByEmail(email) {
+    return this.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
   }
 
   async findUserById(id) {
@@ -246,12 +318,20 @@ class InMemoryStore {
   async createUser(userData) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userData.password, salt);
+<<<<<<< HEAD
     const cleanEmail = (userData.email || '').trim().toLowerCase();
     const newUser = {
       id: `usr-${Date.now()}`,
       name: (userData.name || '').trim(),
       email: cleanEmail,
       phone: (userData.phone || '').trim(),
+=======
+    const newUser = {
+      id: `usr-${Date.now()}`,
+      name: userData.name,
+      email: userData.email.toLowerCase(),
+      phone: userData.phone || '',
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
       password: hashedPassword,
       role: 'user',
       addresses: [],
@@ -259,7 +339,10 @@ class InMemoryStore {
       createdAt: new Date().toISOString()
     };
     this.users.push(newUser);
+<<<<<<< HEAD
     this.savePersistedUsers();
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     const { password, ...safeUser } = newUser;
     return safeUser;
   }
@@ -268,7 +351,10 @@ class InMemoryStore {
     const index = this.users.findIndex(u => u.id === id);
     if (index === -1) return null;
     this.users[index] = { ...this.users[index], ...updates };
+<<<<<<< HEAD
     this.savePersistedUsers();
+=======
+>>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     const { password, ...safeUser } = this.users[index];
     return safeUser;
   }
