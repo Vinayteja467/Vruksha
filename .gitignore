@@ -32,13 +32,8 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-<<<<<<< HEAD
 # Database Backups & Local Persistence
 server/backups/
 server/src/data/persistedUsers.json
 server/src/data/*.json
-=======
-# Database Backups
-server/backups/
->>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
 

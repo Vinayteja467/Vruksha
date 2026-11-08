@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-<<<<<<< HEAD
       const cleanEmail = String(email || '').trim().toLowerCase();
       const data = await api.post('/auth/login', { email: cleanEmail, password });
       if (data.success && data.user) {
@@ -47,16 +46,6 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: data.user };
       }
       return { success: false, message: data?.message || 'Login failed' };
-=======
-      const data = await api.post('/auth/login', { email, password });
-      if (data.success) {
-        localStorage.setItem('ph_token', data.token);
-        setToken(data.token);
-        setUser(data.user);
-        addToast(`Welcome back, ${data.user.name.split(' ')[0]}!`, 'success');
-        return { success: true };
-      }
->>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     } catch (err) {
       const msg = err.data?.message || err.message || 'Login failed';
       addToast(msg, 'error');
@@ -66,7 +55,6 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-<<<<<<< HEAD
       const cleanData = {
         name: String(userData.name || '').trim(),
         email: String(userData.email || '').trim().toLowerCase(),
@@ -75,22 +63,13 @@ export const AuthProvider = ({ children }) => {
       };
       const data = await api.post('/auth/register', cleanData);
       if (data.success && data.user) {
-=======
-      const data = await api.post('/auth/register', userData);
-      if (data.success) {
->>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
         localStorage.setItem('ph_token', data.token);
         setToken(data.token);
         setUser(data.user);
         addToast('Account created successfully! Welcome to VRUKSHA.', 'success');
-<<<<<<< HEAD
         return { success: true, user: data.user };
       }
       return { success: false, message: data?.message || 'Registration failed' };
-=======
-        return { success: true };
-      }
->>>>>>> c282c1146c0ed5459baf610ed72c1e737dd8c6a3
     } catch (err) {
       const msg = err.data?.message || err.message || 'Registration failed';
       addToast(msg, 'error');
