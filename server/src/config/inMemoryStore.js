@@ -456,7 +456,7 @@ class InMemoryStore {
   }
 
   updateProduct(id, updates) {
-    const index = this.products.findIndex(p => p.id === id);
+    const index = this.products.findIndex(p => p.id === id || p._id === id || p.slug === id || p.sku === id);
     if (index === -1) return null;
 
     let price = updates.price !== undefined ? Number(updates.price) : this.products[index].price;
@@ -489,7 +489,7 @@ class InMemoryStore {
   }
 
   deleteProduct(id) {
-    const index = this.products.findIndex(p => p.id === id);
+    const index = this.products.findIndex(p => p.id === id || p._id === id || p.slug === id || p.sku === id);
     if (index === -1) return false;
     this.products.splice(index, 1);
     return true;

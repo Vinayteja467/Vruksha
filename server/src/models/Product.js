@@ -40,6 +40,9 @@ const productSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
+productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toObject', { virtuals: true });
+
 productSchema.pre('validate', function (next) {
   if (!this.slug && this.name) {
     this.slug = this.name

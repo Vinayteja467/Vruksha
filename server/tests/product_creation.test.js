@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { createProduct, updateProduct, getProductBySlug } from '../src/controllers/productController.js';
+import { createProduct, updateProduct, getProductBySlug, deleteProduct } from '../src/controllers/productController.js';
 
 describe('Simplified Product Creation & Optional Fields Controls', () => {
   let createdProductId = null;
@@ -93,7 +93,7 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
         status: (code) => { statusCode = code; return res; },
         json: (data) => { responseData = data; return res; }
       };
-      await createProduct(req, res, () => {});
+      await createProduct(req, res, () => { });
       assert.strictEqual(statusCode, 400);
       assert.match(responseData.message, /name/i);
     }
@@ -107,7 +107,7 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
         status: (code) => { statusCode = code; return res; },
         json: (data) => { responseData = data; return res; }
       };
-      await createProduct(req, res, () => {});
+      await createProduct(req, res, () => { });
       assert.strictEqual(statusCode, 400);
       assert.match(responseData.message, /price/i);
     }
@@ -121,7 +121,7 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
         status: (code) => { statusCode = code; return res; },
         json: (data) => { responseData = data; return res; }
       };
-      await createProduct(req, res, () => {});
+      await createProduct(req, res, () => { });
       assert.strictEqual(statusCode, 400);
       assert.match(responseData.message, /category/i);
     }
@@ -135,7 +135,7 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
         status: (code) => { statusCode = code; return res; },
         json: (data) => { responseData = data; return res; }
       };
-      await createProduct(req, res, () => {});
+      await createProduct(req, res, () => { });
       assert.strictEqual(statusCode, 400);
       assert.match(responseData.message, /stock/i);
     }
@@ -149,7 +149,7 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
         status: (code) => { statusCode = code; return res; },
         json: (data) => { responseData = data; return res; }
       };
-      await createProduct(req, res, () => {});
+      await createProduct(req, res, () => { });
       assert.strictEqual(statusCode, 400);
       assert.match(responseData.message, /image/i);
     }
@@ -196,4 +196,36 @@ describe('Simplified Product Creation & Optional Fields Controls', () => {
     assert.strictEqual(responseData.product.price, 449);
     assert.strictEqual(responseData.product.stock, 80);
   });
+
+  it('should successfully delete a product by id or slug', async () => {
+    let statusCode = 200;
+    let responseData = null;
+
+    const req = {
+      params: { id: createdProductId }
+    };
+    const res = {
+      status: (code) => { statusCode = code; return res; },
+      json: (data) => { responseData = data; return res; }
+    };
+
+    await deleteProduct(req, res, (err) => { if (err) throw err; });
+
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(responseData.success, true);
+    assert.match(responseData.message, /deleted successfully/i);
+
+    // Verify product no longer exists
+    let getStatusCode = 200;
+    let getResponseData = null;
+    const getReq = { params: { slug: createdProductSlug } };
+    const getRes = {
+      status: (code) => { getStatusCode = code; return getRes; },
+      json: (data) => { getResponseData = data; return getRes; }
+    };
+
+    await getProductBySlug(getReq, getRes, () => {});
+    assert.strictEqual(getStatusCode, 404, 'Deleted product should return 404');
+  });
 });
+

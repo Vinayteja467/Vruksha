@@ -113,6 +113,7 @@ export const AdminProductsPage = () => {
   };
 
   const handleOpenEdit = (p) => {
+    const prodId = p._id || p.id || p.slug;
     const basePrice = Number(p.price) || 49;
     const baseOriginal = Number(p.originalPrice) || Math.round(basePrice * 1.25);
     const existingSizes = (p.sizes && p.sizes.length > 0)
@@ -126,6 +127,8 @@ export const AdminProductsPage = () => {
 
     setEditingProduct({
       ...p,
+      id: prodId,
+      _id: prodId,
       price: basePrice,
       originalPrice: baseOriginal,
       sizes: existingSizes
@@ -299,15 +302,18 @@ export const AdminProductsPage = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!id) return;
     try {
       const res = await api.delete(`/products/${id}`);
       if (res.success) {
         addToast('Product removed successfully', 'info');
         setDeleteConfirmId(null);
         fetchProducts();
+      } else {
+        addToast(res.message || 'Failed to delete product', 'error');
       }
     } catch (err) {
-      addToast('Failed to delete product', 'error');
+      addToast(err.data?.message || err.message || 'Failed to delete product', 'error');
     }
   };
 
@@ -361,53 +367,56 @@ export const AdminProductsPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
-              {filtered.map((p) => (
-                <tr key={p.id || p.slug} className="hover:bg-stone-50/60 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={p.images?.[0]}
-                        alt={p.name}
-                        className="w-10 h-10 rounded-xl object-cover bg-stone-100 flex-shrink-0"
-                      />
-                      <div>
-                        <p className="font-bold text-stone-900 line-clamp-1">{p.name}</p>
-                        <p className="text-[10px] text-stone-400">{p.sku}</p>
+              {filtered.map((p) => {
+                const prodId = p._id || p.id || p.slug;
+                return (
+                  <tr key={prodId} className="hover:bg-stone-50/60 transition-colors">
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={p.images?.[0]}
+                          alt={p.name}
+                          className="w-10 h-10 rounded-xl object-cover bg-stone-100 flex-shrink-0"
+                        />
+                        <div>
+                          <p className="font-bold text-stone-900 line-clamp-1">{p.name}</p>
+                          <p className="text-[10px] text-stone-400">{p.sku}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-stone-600 font-medium">{p.category}</td>
-                  <td className="py-3.5 px-4 font-bold text-stone-900">{formatPrice(p.price)}</td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      p.stock > 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                    }`}>
-                      {p.stock} units
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 font-bold text-amber-600">★ {p.rating}</td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(p)}
-                        className="p-1.5 text-stone-500 hover:text-forest-800 hover:bg-stone-100 rounded-lg"
-                        aria-label="Edit product"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDeleteConfirmId(p.id)}
-                        className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-                        aria-label="Delete product"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-3.5 px-4 text-stone-600 font-medium">{p.category}</td>
+                    <td className="py-3.5 px-4 font-bold text-stone-900">{formatPrice(p.price)}</td>
+                    <td className="py-3.5 px-4">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        p.stock > 50 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                      }`}>
+                        {p.stock} units
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-amber-600">★ {p.rating}</td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEdit({ ...p, id: prodId })}
+                          className="p-1.5 text-stone-500 hover:text-forest-800 hover:bg-stone-100 rounded-lg"
+                          aria-label="Edit product"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmId(prodId)}
+                          className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                          aria-label="Delete product"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

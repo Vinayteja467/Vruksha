@@ -224,7 +224,18 @@ export const updateProduct = async (req, res, next) => {
 
     let updated;
     if (isConnectedToMongo) {
-      updated = await Product.findByIdAndUpdate(id, updates, { new: true });
+      const isObjectId = id && typeof id === 'string' && id.match(/^[0-9a-fA-F]{24}$/);
+      updated = await Product.findOneAndUpdate(
+        {
+          $or: [
+            ...(isObjectId ? [{ _id: id }] : []),
+            { slug: id },
+            { sku: id }
+          ]
+        },
+        updates,
+        { new: true }
+      );
     } else {
       updated = inMemoryStore.updateProduct(id, updates);
     }
@@ -245,7 +256,14 @@ export const deleteProduct = async (req, res, next) => {
     let deleted;
 
     if (isConnectedToMongo) {
-      deleted = await Product.findByIdAndDelete(id);
+      const isObjectId = id && typeof id === 'string' && id.match(/^[0-9a-fA-F]{24}$/);
+      deleted = await Product.findOneAndDelete({
+        $or: [
+          ...(isObjectId ? [{ _id: id }] : []),
+          { slug: id },
+          { sku: id }
+        ]
+      });
     } else {
       deleted = inMemoryStore.deleteProduct(id);
     }
