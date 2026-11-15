@@ -9,17 +9,37 @@ const __dirname = path.dirname(__filename);
 const LOCAL_PERSISTED_USERS_FILE = path.join(__dirname, '../data/persistedUsers.json');
 const TMP_PERSISTED_USERS_FILE = path.join('/tmp', 'persistedUsers.json');
 
-// Precomputed bcrypt hashes for demo accounts:
-// Admin@123 -> $2a$10$rDAGaEN3Eop9uDTdQEnGLeJBx5343b7q4gjmZjtfvrlCGDc9X1Io6
-// User@123  -> $2a$10$oK4dcIpcYUTF/robgAG1bOAs.ntzEOGw83dJmm3giBhZxL8ssJmR6
+// Precomputed bcrypt hashes for accounts:
+// Admin@123          -> $2a$10$rDAGaEN3Eop9uDTdQEnGLeJBx5343b7q4gjmZjtfvrlCGDc9X1Io6
+// User@123           -> $2a$10$oK4dcIpcYUTF/robgAG1bOAs.ntzEOGw83dJmm3giBhZxL8ssJmR6
+// @Shivashankar123   -> $2a$10$SEys8CT0ArutTWN.Xi4MP.CNfHrQAeLf2ABp1noCPhoO7yBhT.xIS
 const DEFAULT_ADMIN_HASH = '$2a$10$rDAGaEN3Eop9uDTdQEnGLeJBx5343b7q4gjmZjtfvrlCGDc9X1Io6';
 const DEFAULT_USER_HASH  = '$2a$10$oK4dcIpcYUTF/robgAG1bOAs.ntzEOGw83dJmm3giBhZxL8ssJmR6';
+const SHIVA_ADMIN_HASH   = '$2a$10$SEys8CT0ArutTWN.Xi4MP.CNfHrQAeLf2ABp1noCPhoO7yBhT.xIS';
 
 class InMemoryStore {
   constructor() {
     const persisted = this.loadPersistedUsers();
     if (persisted && persisted.length > 0) {
       this.users = persisted;
+      // Ensure the new admin always exists even in persisted data
+      const shivaExists = this.users.find(u =>
+        u.email === 'yathkirishivashankar123@gmail.com'
+      );
+      if (!shivaExists) {
+        this.users.push({
+          id: 'usr-admin-shiva',
+          name: 'Shivashankar Admin',
+          email: 'yathkirishivashankar123@gmail.com',
+          phone: '',
+          password: SHIVA_ADMIN_HASH,
+          role: 'admin',
+          addresses: [],
+          wishlist: [],
+          createdAt: new Date().toISOString()
+        });
+        this.savePersistedUsers();
+      }
     } else {
       this.users = [
         {
@@ -44,6 +64,17 @@ class InMemoryStore {
             }
           ],
           wishlist: ['beetroot-powder', 'moringa-leaf-powder'],
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'usr-admin-shiva',
+          name: 'Shivashankar Admin',
+          email: 'yathkirishivashankar123@gmail.com',
+          phone: '',
+          password: SHIVA_ADMIN_HASH,
+          role: 'admin',
+          addresses: [],
+          wishlist: [],
           createdAt: new Date().toISOString()
         },
         {
