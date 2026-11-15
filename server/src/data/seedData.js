@@ -645,6 +645,74 @@ export const products = [
     faq: [
       { q: 'Is the sweet potato cooked before powdering?', a: 'Yes, our sweet potatoes are gently steamed prior to dehydration to gelatinize starches for smooth digestibility.' }
     ]
+  },
+  {
+    id: 'prod-013',
+    name: 'Immunity & Vitality Trio Combo',
+    slug: 'immunity-vitality-trio-combo',
+    category: 'Popular Combos',
+    categorySlug: 'popular-combos',
+    shortDescription: 'Curated 3-in-1 wellness pack: Wild Amla, Pure Beetroot, and Organic Moringa.',
+    description: 'Our Immunity & Vitality Trio pairs three of our most beloved farm-fresh powders. Includes Wild Amla (vitamin C powerhouse), Pure Beetroot (natural dietary nitrates), and Organic Moringa Leaf (complete plant protein and bio-available iron). Perfect for active families, smoothies, and mindful gifting.',
+    images: [
+      'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&w=1000&q=80'
+    ],
+    sizes: [
+      { size: '3x100g', price: 699, originalPrice: 899, inStock: true },
+      { size: '3x250g', price: 1499, originalPrice: 1999, inStock: true }
+    ],
+    price: 699,
+    originalPrice: 899,
+    discount: 22,
+    rating: 4.9,
+    reviewCount: 184,
+    featured: true,
+    bestSeller: true,
+    stock: 80,
+    sku: 'VRK-CMB-001',
+    ingredients: '100% Pure Indian Amla, Dehydrated Beetroot, and Shade-Dried Moringa. Zero additives.',
+    usage: 'Add 1 teaspoon of your chosen powder daily to water, fresh juices, yogurt bowls, or morning smoothies.',
+    storage: 'Store in a cool, dry place away from direct sunlight.',
+    benefits: [
+      'Comprehensive everyday vitamin and mineral support',
+      'Curated trio saves over 20% compared to individual items',
+      'Packed in eco-friendly resealable aroma-lock pouches'
+    ]
+  },
+  {
+    id: 'prod-014',
+    name: 'Super Greens Daily Duo',
+    slug: 'super-greens-daily-duo',
+    category: 'Popular Combos',
+    categorySlug: 'popular-combos',
+    shortDescription: 'Power pair of Organic Moringa Leaf Powder and Farm-Fresh Spinach Powder.',
+    description: 'Double the green vitality in your diet. The Super Greens Daily Duo features cold-dehydrated spinach greens and sun-ripened moringa leaves, bursting with natural plant chlorophyll, iron, folate, and calcium.',
+    images: [
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1000&q=80'
+    ],
+    sizes: [
+      { size: '2x150g', price: 499, originalPrice: 649, inStock: true },
+      { size: '2x250g', price: 799, originalPrice: 1049, inStock: true }
+    ],
+    price: 499,
+    originalPrice: 649,
+    discount: 23,
+    rating: 4.8,
+    reviewCount: 96,
+    featured: true,
+    bestSeller: false,
+    stock: 65,
+    sku: 'VRK-CMB-002',
+    ingredients: '100% Dehydrated Moringa Oleifera and Palak (Spinach).',
+    usage: 'Mix into morning detox drinks, stir into dals and soups, or knead into green rotis.',
+    storage: 'Keep pouches tightly zipped in a cool, dry pantry.',
+    benefits: [
+      'Concentrated plant chlorophyll and dietary fiber',
+      'Gentle natural alkalizing greens for daily wellness',
+      'No preservatives, salt, or fillers'
+    ]
   }
 ];
 

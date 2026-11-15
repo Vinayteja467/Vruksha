@@ -149,7 +149,13 @@ const startServer = async () => {
   });
 };
 
-if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+const isTesting =
+  process.env.NODE_ENV === 'test' ||
+  Boolean(process.env.NODE_TEST_CONTEXT) ||
+  process.argv.some((arg) => arg.includes('test')) ||
+  process.execArgv.some((arg) => arg.includes('test'));
+
+if (!process.env.VERCEL && !isTesting) {
   startServer();
 }
 
