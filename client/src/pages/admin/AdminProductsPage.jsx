@@ -80,8 +80,8 @@ export const AdminProductsPage = () => {
     sku: '',
     shortDescription: '',
     description: '',
-    ingredients: '100% Pure & Natural',
-    usage: 'Mix 1 teaspoon with water, milk, or smoothies daily.',
+    ingredients: '',
+    usage: '',
     storage: 'Store in an airtight container in a cool, dry place.',
     images: [],
     sizes: [
@@ -229,6 +229,27 @@ export const AdminProductsPage = () => {
   const handleSaveProduct = async (e) => {
     e.preventDefault();
     try {
+      if (!editingProduct.name || !editingProduct.name.trim()) {
+        addToast('Product name is required', 'error');
+        return;
+      }
+      if (!editingProduct.category || !editingProduct.category.trim()) {
+        addToast('Product category is required', 'error');
+        return;
+      }
+      if (!editingProduct.price || Number(editingProduct.price) <= 0) {
+        addToast('Valid selling price is required', 'error');
+        return;
+      }
+      if (editingProduct.stock === undefined || editingProduct.stock === '' || Number(editingProduct.stock) < 0) {
+        addToast('Valid stock quantity is required', 'error');
+        return;
+      }
+      if (!editingProduct.images || editingProduct.images.length === 0 || !editingProduct.images[0]) {
+        addToast('Product image is required. Please upload an image from your device.', 'error');
+        return;
+      }
+
       const priceNum = Number(editingProduct.price);
       const originalPriceNum = Number(editingProduct.originalPrice) || Math.round(priceNum * 1.25);
       const sanitizedSizes = (editingProduct.sizes && editingProduct.sizes.length > 0)
@@ -240,19 +261,20 @@ export const AdminProductsPage = () => {
           }))
         : [{ size: '100g', price: priceNum, originalPrice: originalPriceNum, inStock: true }];
 
-      const genSlug = editingProduct.slug || editingProduct.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      const genCategorySlug = editingProduct.categorySlug || editingProduct.category.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const baseSlug = (editingProduct.slug || editingProduct.name)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
 
       const payload = {
         ...editingProduct,
-        slug: genSlug,
-        categorySlug: genCategorySlug,
-        ingredients: editingProduct.ingredients || `100% Pure & Natural ${editingProduct.name || 'Produce'}`,
-        usage: editingProduct.usage || 'Mix 1 teaspoon with water, warm milk, or smoothies daily.',
-        storage: editingProduct.storage || 'Store in an airtight container in a cool, dry place.',
-        sku: editingProduct.sku || `VRK-${Math.floor(1000 + Math.random() * 9000)}`,
+        name: editingProduct.name.trim(),
+        slug: baseSlug,
+        sku: editingProduct.sku || `VRK-${baseSlug.toUpperCase().slice(0, 8)}-${Math.floor(100 + Math.random() * 900)}`,
         price: priceNum,
         originalPrice: originalPriceNum,
+        stock: Number(editingProduct.stock),
         sizes: sanitizedSizes
       };
 
@@ -444,16 +466,27 @@ export const AdminProductsPage = () => {
                   <input
                     type="text"
                     required
+                    placeholder="e.g. Pure Beetroot Powder"
                     value={editingProduct.name}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                    onChange={(e) => {
+                      const newName = e.target.value;
+                      const autoSlug = newName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                      setEditingProduct({
+                        ...editingProduct,
+                        name: newName,
+                        ...(!editingProduct.id ? { slug: autoSlug } : {})
+                      });
+                    }}
                     className="w-full p-2.5 rounded-xl border border-stone-300"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-stone-700 mb-1">SKU *</label>
+                  <label className="block font-bold text-stone-700 mb-1">
+                    SKU <span className="text-[10px] text-stone-400 font-normal">(Auto-generated if empty)</span>
+                  </label>
                   <input
                     type="text"
-                    required
+                    placeholder="Auto-generated"
                     value={editingProduct.sku}
                     onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })}
                     className="w-full p-2.5 rounded-xl border border-stone-300"
@@ -463,7 +496,7 @@ export const AdminProductsPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div>
-                  <label className="block font-bold text-stone-700 mb-1">Category</label>
+                  <label className="block font-bold text-stone-700 mb-1">Category *</label>
                   <select
                     value={editingProduct.category}
                     onChange={(e) => setEditingProduct({
@@ -485,6 +518,7 @@ export const AdminProductsPage = () => {
                   <input
                     type="number"
                     required
+                    min="1"
                     value={editingProduct.price}
                     onChange={(e) => handlePriceChange(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-stone-300 font-bold text-forest-900"
@@ -500,9 +534,11 @@ export const AdminProductsPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-stone-700 mb-1">Stock Units</label>
+                  <label className="block font-bold text-stone-700 mb-1">Stock Units *</label>
                   <input
                     type="number"
+                    required
+                    min="0"
                     value={editingProduct.stock}
                     onChange={(e) => setEditingProduct({ ...editingProduct, stock: Number(e.target.value) })}
                     className="w-full p-2.5 rounded-xl border border-stone-300"
@@ -574,7 +610,7 @@ export const AdminProductsPage = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-stone-700 mb-1">Product Image (Upload from device)</label>
+                <label className="block font-bold text-stone-700 mb-1">Product Image (Upload from device) *</label>
                 <div className="mt-1 flex flex-col sm:flex-row items-center gap-4 p-4 border-2 border-dashed border-stone-200 rounded-2xl bg-stone-50/60 hover:bg-stone-50 transition-colors">
                   {editingProduct.images?.[0] ? (
                     <div className="relative group w-24 h-24 rounded-xl overflow-hidden border border-stone-200 shadow-2xs flex-shrink-0 bg-white">
@@ -617,48 +653,59 @@ export const AdminProductsPage = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-stone-700 mb-1">Short Description</label>
-                <input
-                  type="text"
-                  value={editingProduct.shortDescription}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, shortDescription: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-stone-300"
-                />
-              </div>
+              {/* Optional Descriptions, Ingredients & Usage */}
+              <details className="group border border-stone-200 rounded-2xl p-3.5 bg-stone-50/50">
+                <summary className="cursor-pointer font-bold text-stone-700 text-xs flex items-center justify-between select-none">
+                  <span>Additional Details (Optional: Descriptions, Ingredients, Usage)</span>
+                  <span className="text-[11px] text-stone-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div className="pt-3.5 space-y-3 mt-2 border-t border-stone-200">
+                  <div>
+                    <label className="block font-medium text-stone-600 mb-1">Short Description (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="One-line summary for product cards and highlights"
+                      value={editingProduct.shortDescription || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, shortDescription: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-300 bg-white"
+                    />
+                  </div>
 
-              <div>
-                <label className="block font-bold text-stone-700 mb-1">Full Description</label>
-                <textarea
-                  rows="3"
-                  value={editingProduct.description}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-                  className="w-full p-2.5 rounded-xl border border-stone-300"
-                />
-              </div>
+                  <div>
+                    <label className="block font-medium text-stone-600 mb-1">Full Description (Optional)</label>
+                    <textarea
+                      rows="3"
+                      placeholder="Detailed product story, farm origin, or wellness benefits"
+                      value={editingProduct.description || ''}
+                      onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-stone-300 bg-white"
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-stone-700 mb-1">Ingredients</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 100% Pure Organic Beetroot"
-                    value={editingProduct.ingredients || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, ingredients: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-300"
-                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-medium text-stone-600 mb-1">Ingredients (Optional)</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 100% Pure Organic Beetroot"
+                        value={editingProduct.ingredients || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, ingredients: e.target.value })}
+                        className="w-full p-2.5 rounded-xl border border-stone-300 bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-stone-600 mb-1">Suggested Usage (Optional)</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Mix 1 tsp in smoothies or warm water daily"
+                        value={editingProduct.usage || ''}
+                        onChange={(e) => setEditingProduct({ ...editingProduct, usage: e.target.value })}
+                        className="w-full p-2.5 rounded-xl border border-stone-300 bg-white"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block font-bold text-stone-700 mb-1">How to Use (Usage)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Mix 1 tsp in water or smoothies daily"
-                    value={editingProduct.usage || ''}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, usage: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-stone-300"
-                  />
-                </div>
-              </div>
+              </details>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-stone-200">
                 <button

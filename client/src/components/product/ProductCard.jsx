@@ -120,9 +120,11 @@ export const ProductCard = ({ product }) => {
           </Link>
 
           {/* Short description */}
-          <p className="text-xs text-stone-500 line-clamp-2 mt-1 mb-3 leading-relaxed hidden sm:block">
-            {product.shortDescription}
-          </p>
+          {(product.shortDescription || product.description) && (
+            <p className="text-xs text-stone-500 line-clamp-2 mt-1 mb-3 leading-relaxed hidden sm:block">
+              {product.shortDescription || product.description}
+            </p>
+          )}
         </div>
 
         <div>

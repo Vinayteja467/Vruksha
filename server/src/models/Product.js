@@ -28,48 +28,41 @@ const productSchema = new mongoose.Schema({
   reviewCount: { type: Number, default: 0 },
   featured: { type: Boolean, default: false },
   bestSeller: { type: Boolean, default: false },
-  stock: { type: Number, default: 100 },
+  stock: { type: Number, required: true, default: 100 },
   sku: { type: String, default: '' },
-  ingredients: { type: String, default: '100% Pure & Natural Ingredients' },
+  ingredients: { type: String, default: '' },
   nutrition: { type: Map, of: String },
-  usage: { type: String, default: 'Mix 1 teaspoon with water, warm milk, or smoothies daily.' },
-  storage: { type: String, default: 'Store in an airtight container in a cool, dry place.' },
+  usage: { type: String, default: '' },
+  storage: { type: String, default: 'Store in a cool, dry place away from direct sunlight.' },
   benefits: [{ type: String }],
   faq: [faqSchema],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
 
-productSchema.pre('validate', function () {
+productSchema.pre('validate', function (next) {
   if (!this.slug && this.name) {
     this.slug = this.name
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/(^-|-$)+/g, '');
   }
   if (!this.categorySlug && this.category) {
     this.categorySlug = this.category
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+      .replace(/(^-|-$)+/g, '');
   }
-  if (!this.shortDescription && this.description) {
-    this.shortDescription = this.description.slice(0, 150);
+  if (!this.sku && this.name) {
+    const clean = (this.slug || this.name).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+    this.sku = `VRK-${clean || 'PROD'}-${Math.floor(100 + Math.random() * 900)}`;
   }
-  if (!this.sku) {
-    this.sku = `VRK-${Math.floor(1000 + Math.random() * 9000)}`;
+  if (!this.originalPrice && this.price) {
+    this.originalPrice = Math.round(Number(this.price) * 1.25);
   }
-  if (!this.ingredients) {
-    this.ingredients = `100% Pure & Natural ${this.name || 'Ingredients'}`;
-  }
-  if (!this.usage) {
-    this.usage = 'Mix 1 teaspoon (approx 5g) with water, smoothies, or meals daily.';
-  }
-  if (!this.storage) {
-    this.storage = 'Store in an airtight container in a cool, dry place.';
-  }
+  next();
 });
 
 export const Product = mongoose.models.Product || mongoose.model('Product', productSchema);

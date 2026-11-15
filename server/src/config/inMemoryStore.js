@@ -399,9 +399,9 @@ class InMemoryStore {
     let sizes = data.sizes;
     if (sizes && sizes.length > 0) {
       sizes = sizes.map((s, idx) => ({
-        size: s.size,
-        price: idx === 0 ? priceNum : Number(s.price),
-        originalPrice: idx === 0 ? originalPriceNum : Number(s.originalPrice || s.price * 1.25),
+        size: s.size || (idx === 0 ? '100g' : `${(idx + 1) * 100}g`),
+        price: idx === 0 ? priceNum : Number(s.price || priceNum),
+        originalPrice: idx === 0 ? originalPriceNum : Number(s.originalPrice || s.price * 1.25 || originalPriceNum),
         inStock: s.inStock !== false
       }));
     } else {
@@ -410,13 +410,42 @@ class InMemoryStore {
       ];
     }
 
+    const baseSlug = (data.slug || data.name || 'product')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '') || `product-${Date.now()}`;
+
+    let slug = baseSlug;
+    let counter = 1;
+    while (this.products.some(p => p.slug === slug)) {
+      slug = `${baseSlug}-${counter++}`;
+    }
+
+    const cleanCategorySlug = (data.categorySlug || data.category || 'general')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '') || 'general';
+
     const newProd = {
       ...data,
-      id: `prod-${Date.now()}`,
+      id: data.id || `prod-${Date.now()}`,
+      name: String(data.name || '').trim(),
       price: priceNum,
       originalPrice: originalPriceNum,
+      stock: data.stock !== undefined ? Number(data.stock) : 100,
       sizes,
-      slug: data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+      slug,
+      category: data.category || 'Vegetable Products',
+      categorySlug: cleanCategorySlug,
+      sku: data.sku || `VRK-${slug.toUpperCase().slice(0, 8)}-${Math.floor(100 + Math.random() * 900)}`,
+      shortDescription: data.shortDescription || '',
+      description: data.description || '',
+      ingredients: data.ingredients || '',
+      usage: data.usage || '',
+      storage: data.storage || 'Store in a cool, dry place away from direct sunlight.',
+      images: Array.isArray(data.images) && data.images.length > 0 ? data.images : (data.image ? [data.image] : []),
       rating: data.rating || 5.0,
       reviewCount: data.reviewCount || 0,
       discount: originalPriceNum > priceNum ? Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100) : 0,

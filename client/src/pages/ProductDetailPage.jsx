@@ -274,9 +274,19 @@ export const ProductDetailPage = () => {
                 {product.name}
               </h1>
 
-              <p className="text-stone-600 text-sm mt-3 leading-relaxed">
-                {product.shortDescription}
-              </p>
+              {product.shortDescription ? (
+                <p className="text-stone-600 text-sm mt-3 leading-relaxed">
+                  {product.shortDescription}
+                </p>
+              ) : product.description ? (
+                <p className="text-stone-600 text-sm mt-3 leading-relaxed">
+                  {product.description}
+                </p>
+              ) : (
+                <p className="text-stone-500 text-sm mt-3 leading-relaxed">
+                  100% natural, farm-fresh {product.category ? product.category.toLowerCase() : 'wellness product'} prepared with traditional farm-to-home purity.
+                </p>
+              )}
             </div>
 
             {/* Price Block */}
@@ -431,7 +441,9 @@ export const ProductDetailPage = () => {
             {activeTab === 'overview' && (
               <div className="space-y-6 max-w-3xl">
                 <h3 className="font-serif text-2xl font-bold text-forest-950">About {product.name}</h3>
-                <p className="text-sm text-stone-600 leading-relaxed font-normal">{product.description}</p>
+                <p className="text-sm text-stone-600 leading-relaxed font-normal">
+                  {product.description || product.shortDescription || `Experience the pure wellness of ${product.name}. Carefully processed to retain natural aroma, vibrant color, and active nutrients without artificial additives or preservatives.`}
+                </p>
                 {product.benefits && (
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-forest-800 mb-3">Key Natural Attributes</h4>
@@ -452,7 +464,9 @@ export const ProductDetailPage = () => {
               <div className="space-y-4 max-w-2xl">
                 <h3 className="font-serif text-2xl font-bold text-forest-950">Ingredients</h3>
                 <div className="p-4 rounded-2xl bg-cream-100 border border-cream-200">
-                  <p className="text-sm font-semibold text-forest-950">{product.ingredients}</p>
+                  <p className="text-sm font-semibold text-forest-950">
+                    {product.ingredients || `100% Pure & Natural ${product.name}`}
+                  </p>
                 </div>
                 <p className="text-xs text-stone-500 leading-relaxed">
                   We maintain a strict single-ingredient policy for our pure single-origin products. No added starch, sugar, silica, or artificial colors.
@@ -485,7 +499,7 @@ export const ProductDetailPage = () => {
               <div className="space-y-4 max-w-2xl">
                 <h3 className="font-serif text-2xl font-bold text-forest-950">Suggested Culinary & Wellness Uses</h3>
                 <div className="bg-cream-50 p-5 rounded-2xl border border-cream-200 text-sm text-stone-700 leading-relaxed">
-                  {product.usage}
+                  {product.usage || `Add 1-2 teaspoons of ${product.name} to warm water, smoothies, juices, warm milk, or culinary recipes as desired.`}
                 </div>
                 <div className="p-4 rounded-xl border border-cream-200 text-xs text-stone-500">
                   <strong className="text-forest-900 block mb-1">Chef’s Tip:</strong>
@@ -497,7 +511,9 @@ export const ProductDetailPage = () => {
             {activeTab === 'storage' && (
               <div className="space-y-4 max-w-2xl">
                 <h3 className="font-serif text-2xl font-bold text-forest-950">Storage Guidelines</h3>
-                <p className="text-sm text-stone-600 leading-relaxed">{product.storage}</p>
+                <p className="text-sm text-stone-600 leading-relaxed">
+                  {product.storage || 'Store in an airtight container in a cool, dry place away from direct sunlight and moisture.'}
+                </p>
                 <div className="bg-forest-50 p-4 rounded-xl border border-forest-100 text-xs text-forest-900 space-y-1">
                   <p>• Avoid dipping wet spoons or measuring cups into the pouch.</p>
                   <p>• Shelf life: 12 months unopened; 6 months after opening.</p>
