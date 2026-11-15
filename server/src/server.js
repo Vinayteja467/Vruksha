@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
+import { connectDB, isConnectedToMongo } from './config/db.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,7 +60,7 @@ app.use((req, res, next) => {
 // Ensure MongoDB connection in Serverless environments (executed before all routes)
 let isServerlessDbConnected = false;
 app.use(async (req, res, next) => {
-  if (!isServerlessDbConnected && (process.env.VERCEL || !isConnectedToMongo)) {
+  if (process.env.VERCEL && !isServerlessDbConnected) {
     if (env.MONGO_URI) {
       try {
         await connectDB();

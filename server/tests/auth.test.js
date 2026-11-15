@@ -155,3 +155,4 @@ describe('Authentication & Serverless Self-Healing Controls', () => {
     assert.strictEqual(responseData.user.email, testEmail);
   });
 });
+
