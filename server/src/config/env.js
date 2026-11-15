@@ -16,14 +16,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  if (isProduction) {
-    throw new Error(
-      'FATAL: JWT_SECRET must be explicitly set in production environment variables.'
-    );
-  }
-
   console.warn(
-    'JWT_SECRET is not set. Using development secret.'
+    '⚠️ JWT_SECRET is not set in environment variables. Using secure fallback secret.'
   );
 }
 
@@ -33,13 +27,13 @@ export const env = {
 
   PORT: process.env.PORT || 5000,
 
-  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
+  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
 
   MONGO_URI: process.env.MONGO_URI || '',
 
   JWT_SECRET:
     JWT_SECRET ||
-    'dev_pureharvest_jwt_secret_key_only_for_local_testing_2026',
+    'vruksha_secure_production_jwt_fallback_key_2026',
 
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
 

@@ -21,6 +21,18 @@ export const protect = async (req, res, next) => {
       req.user = await User.findById(decoded.id).select('-password');
     } else {
       req.user = await inMemoryStore.findUserById(decoded.id);
+      if (!req.user && (decoded.email || decoded.id)) {
+        // Self-heal stateless user from verified token payload in serverless environments
+        req.user = {
+          id: decoded.id,
+          name: decoded.name || 'User',
+          email: decoded.email || '',
+          role: decoded.role || 'user',
+          addresses: [],
+          wishlist: []
+        };
+        inMemoryStore.users.push(req.user);
+      }
     }
 
     if (!req.user) {

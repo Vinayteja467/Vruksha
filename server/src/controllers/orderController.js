@@ -140,7 +140,7 @@ export const getUserOrders = async (req, res, next) => {
         $or: [{ user: userId }, { 'customerInfo.email': req.user.email.toLowerCase() }]
       }).sort({ createdAt: -1 });
     } else {
-      orders = inMemoryStore.getOrdersByUser(userId);
+      orders = inMemoryStore.getOrdersByUser(userId, req.user?.email);
     }
 
     res.json({ success: true, orders });

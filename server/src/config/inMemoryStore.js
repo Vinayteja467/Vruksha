@@ -6,7 +6,8 @@ import { products as seedProducts, categories as seedCategories, coupons as seed
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PERSISTED_USERS_FILE = path.join(__dirname, '../data/persistedUsers.json');
+const LOCAL_PERSISTED_USERS_FILE = path.join(__dirname, '../data/persistedUsers.json');
+const TMP_PERSISTED_USERS_FILE = path.join('/tmp', 'persistedUsers.json');
 
 // Precomputed bcrypt hashes for demo accounts:
 // Admin@123 -> $2a$10$rDAGaEN3Eop9uDTdQEnGLeJBx5343b7q4gjmZjtfvrlCGDc9X1Io6
@@ -204,8 +205,15 @@ class InMemoryStore {
 
   loadPersistedUsers() {
     try {
-      if (fs.existsSync(PERSISTED_USERS_FILE)) {
-        const raw = fs.readFileSync(PERSISTED_USERS_FILE, 'utf8');
+      if (fs.existsSync(TMP_PERSISTED_USERS_FILE)) {
+        const raw = fs.readFileSync(TMP_PERSISTED_USERS_FILE, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+      if (fs.existsSync(LOCAL_PERSISTED_USERS_FILE)) {
+        const raw = fs.readFileSync(LOCAL_PERSISTED_USERS_FILE, 'utf8');
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed;
@@ -219,9 +227,14 @@ class InMemoryStore {
 
   savePersistedUsers() {
     try {
-      fs.writeFileSync(PERSISTED_USERS_FILE, JSON.stringify(this.users, null, 2), 'utf8');
+      fs.writeFileSync(LOCAL_PERSISTED_USERS_FILE, JSON.stringify(this.users, null, 2), 'utf8');
     } catch (err) {
-      console.warn('⚠️ Could not save persisted users to disk:', err.message);
+      // If root filesystem is read-only (such as Vercel serverless /var/task), save to writable /tmp
+      try {
+        fs.writeFileSync(TMP_PERSISTED_USERS_FILE, JSON.stringify(this.users, null, 2), 'utf8');
+      } catch (tmpErr) {
+        // Safe silent fallback
+      }
     }
   }
 
@@ -443,8 +456,12 @@ class InMemoryStore {
     return newOrder;
   }
 
-  getOrdersByUser(userId) {
-    return this.orders.filter(o => o.user === userId || (o.customerInfo && o.customerInfo.email === userId));
+  getOrdersByUser(userId, email) {
+    const cleanEmail = email ? email.toLowerCase() : '';
+    return this.orders.filter(o =>
+      o.user === userId ||
+      (cleanEmail && o.customerInfo && o.customerInfo.email && o.customerInfo.email.toLowerCase() === cleanEmail)
+    );
   }
 
   getOrderById(idOrOrderNum) {

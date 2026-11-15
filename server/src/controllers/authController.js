@@ -5,10 +5,20 @@ import { User } from '../models/User.js';
 import { isConnectedToMongo } from '../config/db.js';
 import { env } from '../config/env.js';
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN
-  });
+const generateToken = (user) => {
+  const id = user._id ? user._id.toString() : user.id;
+  return jwt.sign(
+    {
+      id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'user'
+    },
+    env.JWT_SECRET,
+    {
+      expiresIn: env.JWT_EXPIRES_IN
+    }
+  );
 };
 
 export const register = async (req, res, next) => {
@@ -45,7 +55,7 @@ export const register = async (req, res, next) => {
           addresses: user.addresses || [],
           wishlist: user.wishlist || []
         },
-        token: generateToken(user._id.toString())
+        token: generateToken(user)
       });
     } else {
       const existing = await inMemoryStore.findUserByEmail(email);
@@ -56,7 +66,7 @@ export const register = async (req, res, next) => {
       return res.status(201).json({
         success: true,
         user,
-        token: generateToken(user.id)
+        token: generateToken(user)
       });
     }
   } catch (err) {
@@ -95,7 +105,7 @@ export const login = async (req, res, next) => {
           addresses: user.addresses || [],
           wishlist: user.wishlist || []
         },
-        token: generateToken(user._id.toString())
+        token: generateToken(user)
       });
     } else {
       const user = await inMemoryStore.findUserByEmail(email);
@@ -114,7 +124,7 @@ export const login = async (req, res, next) => {
           addresses: safeUser.addresses || [],
           wishlist: safeUser.wishlist || []
         },
-        token: generateToken(user.id)
+        token: generateToken(user)
       });
     }
   } catch (err) {

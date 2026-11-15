@@ -47,6 +47,41 @@ app.use(cors({
 }));
 app.options('*', cors());
 
+// Vercel Serverless Path Normalizer:
+// If rewritten to /api/index.js, restore the original path from Vercel request headers
+app.use((req, res, next) => {
+  const origPath = req.headers['x-matched-path'] || req.headers['x-invoke-path'] || req.headers['x-forwarded-uri'];
+  if (origPath && (req.url === '/api/index.js' || req.url === '/api/index' || req.url === '/api')) {
+    req.url = origPath;
+  }
+  next();
+});
+
+// Ensure MongoDB connection in Serverless environments (executed before all routes)
+let isServerlessDbConnected = false;
+app.use(async (req, res, next) => {
+  if (!isServerlessDbConnected && (process.env.VERCEL || !isConnectedToMongo)) {
+    if (env.MONGO_URI) {
+      try {
+        await connectDB();
+        isServerlessDbConnected = true;
+      } catch (err) {
+        console.warn('⚠️ Serverless DB connect warning:', err.message);
+      }
+    }
+  }
+  next();
+});
+
+// Vercel serverless request body pre-parse guard:
+// When @vercel/node pre-parses req.body, express.json() must not attempt to re-read an already consumed stream
+app.use((req, res, next) => {
+  if (req.body && typeof req.body === 'object') {
+    req._body = true;
+  }
+  next();
+});
+
 // Body parsing with raw buffer preservation for Razorpay webhook verification
 app.use(express.json({
   limit: '15mb',
@@ -104,20 +139,6 @@ if (fs.existsSync(clientDist)) {
 // Error Handling
 app.use(notFound);
 app.use(errorHandler);
-
-// Ensure MongoDB connection in Serverless environments
-let isServerlessDbConnected = false;
-app.use(async (req, res, next) => {
-  if (!isServerlessDbConnected && process.env.VERCEL) {
-    try {
-      await connectDB();
-      isServerlessDbConnected = true;
-    } catch (err) {
-      console.warn('⚠️ Serverless DB connect warning:', err.message);
-    }
-  }
-  next();
-});
 
 // Start Server
 const startServer = async () => {

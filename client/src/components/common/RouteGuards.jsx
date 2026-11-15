@@ -78,7 +78,8 @@ export const PublicOnlyRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    const destination = location.state?.from?.pathname || '/account';
+    const rawDest = location.state?.from?.pathname;
+    const destination = (rawDest && rawDest !== '/login' && rawDest !== '/register') ? rawDest : '/account';
     return <Navigate to={destination} replace />;
   }
 
