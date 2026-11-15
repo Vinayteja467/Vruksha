@@ -56,21 +56,30 @@ export const createRazorpayOrder = async (req, res, next) => {
     const orderReceipt = receipt || `rcpt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
     if (razorpayInstance) {
-      const razorpayOrder = await razorpayInstance.orders.create({
-        amount: amountInPaise,
-        currency: 'INR',
-        receipt: orderReceipt,
-        notes: {
-          brand: 'VRUKSHA Farm To Home'
-        }
-      });
+      try {
+        const razorpayOrder = await razorpayInstance.orders.create({
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: orderReceipt,
+          notes: {
+            brand: 'VRUKSHA Farm To Home'
+          }
+        });
 
-      return res.json({
-        success: true,
-        order: razorpayOrder,
-        keyId: env.RAZORPAY_KEY_ID,
-        pricing: pricingBreakdown
-      });
+        return res.json({
+          success: true,
+          order: razorpayOrder,
+          keyId: env.RAZORPAY_KEY_ID,
+          pricing: pricingBreakdown
+        });
+      } catch (rzpErr) {
+        console.error('⚠️ [Razorpay] Order creation failed:', rzpErr.error || rzpErr.message);
+        return res.status(502).json({
+          success: false,
+          message: rzpErr.error?.description || 'Razorpay authentication failed. Please verify your Key ID and Key Secret in the Razorpay Dashboard.',
+          code: rzpErr.error?.code || 'RAZORPAY_AUTH_ERROR'
+        });
+      }
     }
 
     // Test / Simulated Razorpay Order Structure

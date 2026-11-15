@@ -132,7 +132,7 @@ export const CheckoutPage = () => {
       });
 
       if (!rzpRes.success || !rzpRes.order) {
-        throw new Error('Unable to initialize secure payment gateway');
+        throw new Error(rzpRes.message || 'Unable to initialize secure payment gateway');
       }
 
       // Check if Razorpay script is loaded
