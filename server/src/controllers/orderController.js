@@ -24,6 +24,11 @@ export const createOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Complete customer contact information is required' });
     }
 
+    const cleanPhone = (customerInfo.phone || '').trim().replace(/[\s-]/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid 10-digit Indian mobile number' });
+    }
+
     if (!shippingAddress || !shippingAddress.house || !shippingAddress.street || !shippingAddress.city || !shippingAddress.pincode) {
       return res.status(400).json({ success: false, message: 'Complete shipping address is required' });
     }
@@ -74,7 +79,7 @@ export const createOrder = async (req, res, next) => {
       paymentId = razorpay_payment_id;
     }
 
-    const orderNumber = `PH-ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+    const orderNumber = `VRK-ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const orderPayload = {
       orderNumber,
@@ -82,13 +87,13 @@ export const createOrder = async (req, res, next) => {
       customerInfo: {
         fullName: customerInfo.fullName.trim(),
         email: customerInfo.email.trim().toLowerCase(),
-        phone: customerInfo.phone.trim()
+        phone: cleanPhone
       },
       shippingAddress: {
         house: shippingAddress.house.trim(),
         street: shippingAddress.street.trim(),
         city: shippingAddress.city.trim(),
-        state: shippingAddress.state || 'Maharashtra',
+        state: (shippingAddress.state && shippingAddress.state.trim()) || 'Karnataka',
         pincode: shippingAddress.pincode.trim()
       },
       items: pricing.items,
@@ -225,6 +230,83 @@ export const updateOrderStatus = async (req, res, next) => {
       if (!updated) return res.status(404).json({ success: false, message: 'Order not found' });
       return res.json({ success: true, order: updated });
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const trackOrder = async (req, res, next) => {
+  try {
+    const { orderNumber, contact } = req.body;
+    if (!orderNumber || !contact) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order number and contact (10-digit mobile or email) are required'
+      });
+    }
+
+    const cleanOrderNum = String(orderNumber).trim();
+    const cleanContact = String(contact).trim().toLowerCase().replace(/[\s-]/g, '');
+
+    let order;
+    if (isConnectedToMongo) {
+      order = await Order.findOne({
+        $or: [
+          { orderNumber: cleanOrderNum },
+          { _id: cleanOrderNum.match(/^[0-9a-fA-F]{24}$/) ? cleanOrderNum : null }
+        ]
+      });
+    } else {
+      order = inMemoryStore.orders?.find(
+        (o) => o.orderNumber === cleanOrderNum || o.id === cleanOrderNum
+      );
+    }
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'No order found with the provided details. Please verify your order number.'
+      });
+    }
+
+    const ordEmail = (order.customerInfo?.email || '').toLowerCase().trim();
+    const ordPhone = (order.customerInfo?.phone || '').trim().replace(/[\s-]/g, '');
+
+    const isMatch = (ordEmail === cleanContact) || (ordPhone === cleanContact);
+
+    if (!isMatch) {
+      return res.status(403).json({
+        success: false,
+        message: 'The contact information does not match the customer on this order'
+      });
+    }
+
+    return res.json({
+      success: true,
+      order: {
+        id: order._id ? order._id.toString() : order.id,
+        orderNumber: order.orderNumber,
+        createdAt: order.createdAt,
+        orderStatus: order.orderStatus,
+        paymentStatus: order.paymentStatus,
+        paymentMethod: order.paymentMethod,
+        total: order.total,
+        timeline: order.timeline || [],
+        items: (order.items || []).map((i) => ({
+          name: i.name,
+          image: i.image,
+          size: i.size,
+          quantity: i.quantity,
+          price: i.price,
+          itemTotal: i.itemTotal
+        })),
+        shippingAddress: {
+          city: order.shippingAddress?.city,
+          state: order.shippingAddress?.state,
+          pincode: order.shippingAddress?.pincode
+        }
+      }
+    });
   } catch (err) {
     next(err);
   }

@@ -64,6 +64,12 @@ export const CheckoutPage = () => {
       return;
     }
 
+    const cleanPhone = formData.phone.trim().replace(/[\s-]/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      addToast('Please enter a valid 10-digit Indian mobile number', 'error');
+      return;
+    }
+
     if (!formData.house.trim() || !formData.street.trim() || !formData.city.trim() || !formData.pincode.trim()) {
       addToast('Please complete your delivery address', 'error');
       return;
@@ -552,7 +558,26 @@ export const CheckoutPage = () => {
                   className="mt-0.5 text-forest-800 rounded border-cream-300 focus:ring-forest-600"
                 />
                 <span>
-                  I agree to the <Link to="/terms" className="underline text-forest-800">Terms of Service</Link> and <Link to="/privacy" className="underline text-forest-800">Privacy Policy</Link>.
+                  I agree to the{' '}
+                  <Link
+                    to="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="underline text-forest-800 hover:text-forest-950 font-semibold"
+                  >
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link
+                    to="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="underline text-forest-800 hover:text-forest-950 font-semibold"
+                  >
+                    Privacy Policy
+                  </Link>.
                 </span>
               </label>
 

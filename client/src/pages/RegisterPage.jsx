@@ -42,11 +42,19 @@ export const RegisterPage = () => {
       return;
     }
 
+    const cleanPhone = (formData.phone || '').trim().replace(/[\s-]/g, '');
+    if (cleanPhone && !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      const err = 'Please enter a valid 10-digit Indian mobile number';
+      setErrorMessage(err);
+      addToast(err, 'error');
+      return;
+    }
+
     setLoading(true);
     const result = await register({
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
-      phone: formData.phone.trim(),
+      phone: cleanPhone,
       password: formData.password
     });
     setLoading(false);

@@ -58,7 +58,14 @@ export const CartProvider = ({ children }) => {
     }
   }, [appliedCoupon]);
 
+  const getProductId = (p) => {
+    if (!p) return '';
+    return p._id || p.id || p.slug || '';
+  };
+
   const addToCart = (product, selectedSize = '100g', quantity = 1) => {
+    const prodId = getProductId(product);
+    const prodSlug = product.slug || prodId;
     const baseSize = product.sizes?.[0]?.size || '100g';
     const foundSize = product.sizes?.find((s) => s.size === selectedSize);
     const sizePrice = (selectedSize === baseSize && product.price)
@@ -76,7 +83,9 @@ export const CartProvider = ({ children }) => {
 
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
-        (item) => (item.product === product.id || item.slug === product.slug) && item.size === selectedSize
+        (item) =>
+          (item.product === prodId || item.slug === prodSlug || item.id === prodId || item._id === prodId) &&
+          item.size === selectedSize
       );
 
       if (existingIndex > -1) {
@@ -88,9 +97,11 @@ export const CartProvider = ({ children }) => {
       return [
         ...prev,
         {
-          product: product.id,
+          product: prodId,
+          id: prodId,
+          _id: product._id || prodId,
           name: product.name,
-          slug: product.slug,
+          slug: prodSlug,
           image: product.images?.[0] || 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?auto=format&fit=crop&w=800&q=80',
           size: selectedSize,
           price: sizeObj.price,
@@ -114,10 +125,16 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (productId, size) => {
     const itemToRemove = cartItems.find(
-      (item) => (item.product === productId || item.slug === productId) && item.size === size
+      (item) =>
+        (item.product === productId || item.slug === productId || item.id === productId || item._id === productId) &&
+        item.size === size
     );
     setCartItems((prev) =>
-      prev.filter((item) => !((item.product === productId || item.slug === productId) && item.size === size))
+      prev.filter(
+        (item) =>
+          !((item.product === productId || item.slug === productId || item.id === productId || item._id === productId) &&
+            item.size === size)
+      )
     );
     if (itemToRemove) {
       addToast(`Removed ${itemToRemove.name} from cart`, 'info');
@@ -132,7 +149,10 @@ export const CartProvider = ({ children }) => {
 
     setCartItems((prev) =>
       prev.map((item) => {
-        if ((item.product === productId || item.slug === productId) && item.size === size) {
+        if (
+          (item.product === productId || item.slug === productId || item.id === productId || item._id === productId) &&
+          item.size === size
+        ) {
           return { ...item, quantity };
         }
         return item;

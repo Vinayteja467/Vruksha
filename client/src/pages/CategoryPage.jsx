@@ -24,9 +24,17 @@ export const CategoryPage = () => {
         }
 
         if (catData.success) {
-          const current = (catData.categories || []).find(
-            (c) => c.slug === category || c.id === category
-          );
+          const normalizedCat = (category || '').toLowerCase().replace(/-(powders|products)$/, '');
+          const current = (catData.categories || []).find((c) => {
+            const cSlug = (c.slug || '').toLowerCase();
+            const cId = (c.id || '').toLowerCase();
+            return (
+              cSlug === category ||
+              cId === category ||
+              cSlug.replace(/-(powders|products)$/, '') === normalizedCat ||
+              cId.replace(/-(powders|products)$/, '') === normalizedCat
+            );
+          });
           setCategoryInfo(current);
         }
       } catch (err) {

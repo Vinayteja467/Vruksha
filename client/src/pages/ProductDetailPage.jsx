@@ -135,8 +135,10 @@ export const ProductDetailPage = () => {
   };
 
   const handleBuyNow = () => {
-    addToCart(product, selectedSize, quantity);
-    navigate('/checkout');
+    addToCart(product, selectedSize || product.sizes?.[0]?.size || '100g', quantity);
+    setTimeout(() => {
+      navigate('/checkout');
+    }, 60);
   };
 
   const handleReviewSubmit = async (e) => {

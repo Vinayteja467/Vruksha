@@ -508,11 +508,21 @@ export const AdminProductsPage = () => {
                   <label className="block font-bold text-stone-700 mb-1">Category *</label>
                   <select
                     value={editingProduct.category}
-                    onChange={(e) => setEditingProduct({
-                      ...editingProduct,
-                      category: e.target.value,
-                      categorySlug: e.target.value.toLowerCase().replace(/ /g, '-')
-                    })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const categorySlugMap = {
+                        'Fruit Products': 'fruit-powders',
+                        'Vegetable Products': 'vegetable-powders',
+                        'Leafy Products': 'leafy-powders',
+                        'Wellness Products': 'wellness-powders',
+                        'Popular Combos': 'popular-combos'
+                      };
+                      setEditingProduct({
+                        ...editingProduct,
+                        category: val,
+                        categorySlug: categorySlugMap[val] || val.toLowerCase().replace(/ /g, '-')
+                      });
+                    }}
                     className="w-full p-2.5 rounded-xl border border-stone-300"
                   >
                     <option value="Fruit Products">Fruit Products</option>

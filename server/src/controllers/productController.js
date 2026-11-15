@@ -2,6 +2,37 @@ import { inMemoryStore } from '../config/inMemoryStore.js';
 import { Product } from '../models/Product.js';
 import { isConnectedToMongo } from '../config/db.js';
 
+// Safe regex string escaper to eliminate ReDoS & syntax crashes
+const escapeRegex = (str) => {
+  return str ? str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '';
+};
+
+// Normalizes category aliases so fruit-powders, fruit-products, Fruit Products, etc. always match
+export const getCategoryAliases = (cat) => {
+  if (!cat || cat === 'all') return [];
+  const normalized = cat.toLowerCase().trim();
+  const root = normalized
+    .replace(/-(powders|products)$/, '')
+    .replace(/ (powders|products)$/, '');
+
+  const aliases = new Set([
+    normalized,
+    root,
+    `${root}-powders`,
+    `${root}-products`,
+    `${root} powders`,
+    `${root} products`
+  ]);
+
+  if (normalized.includes('combo') || root.includes('combo')) {
+    aliases.add('popular-combos');
+    aliases.add('popular combos');
+    aliases.add('combos');
+  }
+
+  return Array.from(aliases);
+};
+
 export const getProducts = async (req, res, next) => {
   try {
     const { category, search, minPrice, maxPrice, rating, sort, inStock, limit, page } = req.query;
@@ -9,14 +40,36 @@ export const getProducts = async (req, res, next) => {
     if (isConnectedToMongo) {
       let query = {};
       if (category && category !== 'all') {
-        query.$or = [{ categorySlug: category }, { category: new RegExp(category, 'i') }];
-      }
-      if (search) {
+        const aliases = getCategoryAliases(category);
+        const escapedAliases = aliases.map(a => escapeRegex(a));
+        const regexList = escapedAliases.map(a => new RegExp(`^${a}$`, 'i'));
+        const containsRegexList = escapedAliases.map(a => new RegExp(a, 'i'));
+
         query.$or = [
-          { name: new RegExp(search, 'i') },
-          { shortDescription: new RegExp(search, 'i') },
-          { ingredients: new RegExp(search, 'i') }
+          { categorySlug: { $in: aliases } },
+          { category: { $in: containsRegexList } },
+          { categorySlug: { $in: regexList } }
         ];
+      }
+      if (search && search.trim()) {
+        const escaped = escapeRegex(search.trim());
+        const searchRegex = new RegExp(escaped, 'i');
+        const searchConditions = [
+          { name: searchRegex },
+          { shortDescription: searchRegex },
+          { ingredients: searchRegex },
+          { category: searchRegex }
+        ];
+
+        if (query.$or) {
+          query.$and = [
+            { $or: query.$or },
+            { $or: searchConditions }
+          ];
+          delete query.$or;
+        } else {
+          query.$or = searchConditions;
+        }
       }
       if (minPrice || maxPrice) {
         query.price = {};

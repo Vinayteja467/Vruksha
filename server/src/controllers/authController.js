@@ -31,8 +31,12 @@ export const register = async (req, res, next) => {
 
     name = String(name).trim();
     email = String(email).trim().toLowerCase();
-    phone = phone ? String(phone).trim() : '';
+    phone = phone ? String(phone).trim().replace(/[\s-]/g, '') : '';
     password = String(password);
+
+    if (phone && !/^[6-9]\d{9}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid 10-digit Indian phone number' });
+    }
 
     if (password.length < 6) {
       return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });

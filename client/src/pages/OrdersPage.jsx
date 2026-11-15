@@ -11,15 +11,22 @@ export const OrdersPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Guest & direct order tracking state
+  const [trackOrderNum, setTrackOrderNum] = useState('');
+  const [trackContact, setTrackContact] = useState('');
+  const [trackError, setTrackError] = useState('');
+  const [trackLoading, setTrackLoading] = useState(false);
+  const [trackedGuestOrder, setTrackedGuestOrder] = useState(null);
 
   const stages = ['Order Placed', 'Confirmed', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
 
   useEffect(() => {
     if (!user) {
       setOrders([]);
-      navigate('/login', { replace: true });
+      setLoading(false);
       return;
     }
 
@@ -40,7 +47,33 @@ export const OrdersPage = () => {
       }
     };
     fetchOrders();
-  }, [user, navigate]);
+  }, [user]);
+
+  const handleTrackSubmit = async (e) => {
+    e.preventDefault();
+    if (!trackOrderNum.trim() || !trackContact.trim()) {
+      setTrackError('Please provide both Order Number and registered 10-digit Phone or Email');
+      return;
+    }
+    setTrackLoading(true);
+    setTrackError('');
+    try {
+      const res = await api.post('/orders/track', {
+        orderNumber: trackOrderNum.trim(),
+        contact: trackContact.trim()
+      });
+      if (res.success && res.order) {
+        setTrackedGuestOrder(res.order);
+        setSelectedOrder(res.order);
+      } else {
+        setTrackError(res.message || 'No matching order found');
+      }
+    } catch (err) {
+      setTrackError(err.message || 'Unable to track order. Please check your order number and contact information.');
+    } finally {
+      setTrackLoading(false);
+    }
+  };
 
   const getStageIndex = (status) => {
     const idx = stages.indexOf(status);
@@ -69,26 +102,97 @@ export const OrdersPage = () => {
           <div className="bg-white p-12 rounded-3xl border border-cream-200 text-center text-xs text-stone-500">
             Loading order histories...
           </div>
-        ) : orders.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border border-cream-200 text-center max-w-md mx-auto space-y-4 shadow-soft">
-            <Package className="w-12 h-12 text-stone-300 mx-auto" />
-            <h2 className="font-serif text-xl font-bold text-forest-950">No orders placed yet</h2>
-            <p className="text-xs text-stone-500">Discover our collection of 100% natural products for everyday wellness.</p>
-            <Link
-              to="/shop"
-              className="inline-block px-6 py-3 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
-            >
-              Shop Now
-            </Link>
+        ) : orders.length === 0 && !trackedGuestOrder ? (
+          <div className="max-w-xl mx-auto space-y-8">
+            {/* Guest Order Lookup Form */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-cream-200 shadow-soft space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-forest-50 text-forest-800 flex items-center justify-center">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="font-serif text-xl font-bold text-forest-950">Track Shipment Status</h2>
+                  <p className="text-xs text-stone-500">Track any order with your Order ID and registered phone or email</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleTrackSubmit} className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-forest-900 mb-1">
+                    Order Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. VRK-ORD-849102"
+                    value={trackOrderNum}
+                    onChange={(e) => setTrackOrderNum(e.target.value)}
+                    className="w-full text-xs p-3 rounded-xl border border-cream-300 focus:outline-none focus:border-forest-600 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-forest-900 mb-1">
+                    Registered Mobile or Email *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 9876543210 or yourname@gmail.com"
+                    value={trackContact}
+                    onChange={(e) => setTrackContact(e.target.value)}
+                    className="w-full text-xs p-3 rounded-xl border border-cream-300 focus:outline-none focus:border-forest-600 bg-white"
+                  />
+                </div>
+
+                {trackError && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{trackError}</span>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={trackLoading}
+                  className="w-full py-3 bg-forest-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest-700 transition-colors shadow-soft"
+                >
+                  {trackLoading ? 'Searching...' : 'Track My Order →'}
+                </button>
+              </form>
+            </div>
+
+            {/* Prompt for account */}
+            <div className="bg-cream-100/50 p-6 rounded-3xl border border-cream-200 text-center space-y-3">
+              <Package className="w-8 h-8 text-forest-800/60 mx-auto" />
+              <h3 className="font-serif text-lg font-bold text-forest-950">Looking for your saved account history?</h3>
+              <p className="text-xs text-stone-600 max-w-sm mx-auto">
+                Sign in to your VRUKSHA account to view all past invoices, reorder favorite powders, and track live deliveries.
+              </p>
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <Link
+                  to="/login"
+                  className="px-5 py-2.5 bg-forest-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest-800"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/shop"
+                  className="px-5 py-2.5 border border-forest-800 text-forest-800 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-forest-50"
+                >
+                  Shop Now
+                </Link>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Orders List (5 cols) */}
             <div className="lg:col-span-5 space-y-4">
               <span className="text-xs font-bold uppercase tracking-wider text-forest-700 block mb-2">
-                All Orders ({orders.length})
+                {orders.length > 0 ? `All Orders (${orders.length})` : 'Tracked Shipment'}
               </span>
-              {orders.map((ord) => (
+              {(orders.length > 0 ? orders : (trackedGuestOrder ? [trackedGuestOrder] : [])).map((ord) => (
                 <div
                   key={ord.id || ord.orderNumber}
                   onClick={() => setSelectedOrder(ord)}

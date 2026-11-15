@@ -101,14 +101,8 @@ const MainContent = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <OrdersPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/track" element={<OrdersPage />} />
           <Route path="/bulk-orders" element={<BulkOrdersPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />

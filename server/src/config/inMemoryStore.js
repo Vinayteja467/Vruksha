@@ -322,21 +322,34 @@ class InMemoryStore {
     let list = [...this.products];
 
     if (category && category !== 'all') {
-      const catLower = category.toLowerCase();
-      list = list.filter(p => 
-        p.categorySlug === catLower || 
-        p.category.toLowerCase() === catLower ||
-        (catLower === 'combos' && p.categorySlug === 'popular-combos')
-      );
+      const catLower = category.toLowerCase().trim();
+      const root = catLower.replace(/-(powders|products)$/, '').replace(/ (powders|products)$/, '');
+      const validAliases = [
+        catLower,
+        root,
+        `${root}-powders`,
+        `${root}-products`,
+        `${root} powders`,
+        `${root} products`
+      ];
+      if (catLower === 'combos' || root === 'popular-combo' || root === 'combo') {
+        validAliases.push('popular-combos', 'popular combos', 'combos');
+      }
+
+      list = list.filter(p => {
+        const pSlug = (p.categorySlug || '').toLowerCase();
+        const pCat = (p.category || '').toLowerCase();
+        return validAliases.includes(pSlug) || validAliases.includes(pCat) || validAliases.some(a => pCat.includes(a));
+      });
     }
 
     if (search && search.trim() !== '') {
       const q = search.toLowerCase().trim();
       list = list.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.shortDescription.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.ingredients.toLowerCase().includes(q)
+        (p.name && p.name.toLowerCase().includes(q)) ||
+        (p.shortDescription && p.shortDescription.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.ingredients && p.ingredients.toLowerCase().includes(q))
       );
     }
 

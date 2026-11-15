@@ -1,6 +1,7 @@
 import { inMemoryStore } from '../config/inMemoryStore.js';
 import { Review } from '../models/Review.js';
 import { Order } from '../models/Order.js';
+import { Product } from '../models/Product.js';
 import { isConnectedToMongo } from '../config/db.js';
 
 export const getReviews = async (req, res, next) => {
@@ -8,7 +9,24 @@ export const getReviews = async (req, res, next) => {
     const { productId } = req.query;
     if (isConnectedToMongo) {
       let query = { isApproved: true };
-      if (productId) query.product = productId;
+      if (productId) {
+        let matchIds = [productId];
+        try {
+          const pDoc = await Product.findOne({
+            $or: [
+              { _id: productId.match(/^[0-9a-fA-F]{24}$/) ? productId : null },
+              { slug: productId },
+              { id: productId }
+            ]
+          });
+          if (pDoc) {
+            if (pDoc._id) matchIds.push(pDoc._id.toString());
+            if (pDoc.slug) matchIds.push(pDoc.slug);
+            if (pDoc.id) matchIds.push(pDoc.id);
+          }
+        } catch (e) {}
+        query.product = { $in: matchIds };
+      }
       const reviews = await Review.find(query).sort({ createdAt: -1 });
       return res.json({ success: true, reviews });
     }
@@ -32,6 +50,30 @@ export const addReview = async (req, res, next) => {
     const userEmail = req.user.email ? req.user.email.toLowerCase() : '';
     const cleanProductId = productId || 'prod-001';
 
+    let idList = [cleanProductId];
+    if (isConnectedToMongo) {
+      try {
+        const productDoc = await Product.findOne({
+          $or: [
+            { _id: cleanProductId.match(/^[0-9a-fA-F]{24}$/) ? cleanProductId : null },
+            { slug: cleanProductId },
+            { id: cleanProductId }
+          ]
+        });
+        if (productDoc) {
+          if (productDoc._id) idList.push(productDoc._id.toString());
+          if (productDoc.slug) idList.push(productDoc.slug);
+          if (productDoc.id) idList.push(productDoc.id);
+        }
+      } catch (e) {}
+    } else {
+      const productDoc = inMemoryStore.getProductById(cleanProductId) || inMemoryStore.getProductBySlug(cleanProductId);
+      if (productDoc) {
+        if (productDoc.id) idList.push(productDoc.id);
+        if (productDoc.slug) idList.push(productDoc.slug);
+      }
+    }
+
     // Verify if customer actually purchased and received this product
     let isVerifiedPurchase = false;
 
@@ -47,8 +89,8 @@ export const addReview = async (req, res, next) => {
           { orderStatus: 'Delivered' },
           {
             $or: [
-              { 'items.product': cleanProductId },
-              { 'items.slug': cleanProductId }
+              { 'items.product': { $in: idList } },
+              { 'items.slug': { $in: idList } }
             ]
           }
         ]
@@ -58,7 +100,7 @@ export const addReview = async (req, res, next) => {
       const userOrders = inMemoryStore.getOrdersByUser(userId);
       isVerifiedPurchase = userOrders.some(
         o => o.orderStatus === 'Delivered' &&
-             o.items?.some(i => i.product === cleanProductId || i.slug === cleanProductId)
+             o.items?.some(i => idList.includes(i.product) || idList.includes(i.slug))
       );
     }
 

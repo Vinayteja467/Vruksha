@@ -10,6 +10,19 @@ export const submitContactInquiry = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Name, email, and message are required' });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
+    }
+
+    let cleanPhone = '';
+    if (phone && phone.trim()) {
+      cleanPhone = phone.trim().replace(/[\s-]/g, '');
+      if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return res.status(400).json({ success: false, message: 'Please provide a valid 10-digit Indian phone number' });
+      }
+    }
+
     const referenceId = `VRK-INQ-${Math.floor(100000 + Math.random() * 900000)}`;
 
     if (isConnectedToMongo) {
@@ -17,7 +30,7 @@ export const submitContactInquiry = async (req, res, next) => {
         referenceId,
         name: name.trim(),
         email: email.trim().toLowerCase(),
-        phone: phone ? phone.trim() : '',
+        phone: cleanPhone,
         message: message.trim(),
         status: 'New'
       });
@@ -34,7 +47,7 @@ export const submitContactInquiry = async (req, res, next) => {
         referenceId,
         name: name.trim(),
         email: email.trim().toLowerCase(),
-        phone: phone ? phone.trim() : '',
+        phone: cleanPhone,
         message: message.trim(),
         status: 'New',
         createdAt: new Date().toISOString()
@@ -51,6 +64,61 @@ export const submitContactInquiry = async (req, res, next) => {
         inquiry
       });
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const subscribeNewsletter = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Email address is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
+    }
+
+    const referenceId = `VRK-SUB-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    if (isConnectedToMongo) {
+      await ContactInquiry.findOneAndUpdate(
+        { email: cleanEmail },
+        {
+          referenceId,
+          name: 'Newsletter Subscriber',
+          email: cleanEmail,
+          phone: '',
+          message: 'Subscribed to VRUKSHA seasonal offers and newsletter',
+          status: 'Subscribed'
+        },
+        { upsert: true, new: true }
+      );
+    } else {
+      if (!inMemoryStore.contactInquiries) inMemoryStore.contactInquiries = [];
+      const existing = inMemoryStore.contactInquiries.find(c => c.email === cleanEmail);
+      if (!existing) {
+        inMemoryStore.contactInquiries.push({
+          id: `sub-${Date.now()}`,
+          referenceId,
+          name: 'Newsletter Subscriber',
+          email: cleanEmail,
+          phone: '',
+          message: 'Subscribed to VRUKSHA seasonal offers and newsletter',
+          status: 'Subscribed',
+          createdAt: new Date().toISOString()
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Thank you for subscribing! Your 10% coupon code is VRUKSHA10',
+      coupon: 'VRUKSHA10'
+    });
   } catch (err) {
     next(err);
   }

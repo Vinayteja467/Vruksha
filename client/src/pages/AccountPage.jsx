@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useToast } from '../context/ToastContext';
 import { formatPrice, formatDate } from '../utils/formatters';
 import { api } from '../api/client';
 
@@ -26,6 +27,7 @@ export const AccountPage = () => {
 
   const { user, logout, updateProfile, isAdmin } = useAuth();
   const { wishlist, toggleWishlist } = useWishlist();
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
@@ -133,11 +135,53 @@ export const AccountPage = () => {
 
   const handleAddAddress = async (e) => {
     e.preventDefault();
-    const updated = [...addresses, { ...newAddr, id: `addr-${Date.now()}` }];
+    const cleanPhone = (newAddr.phone || '').trim().replace(/[\s-]/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      addToast('Please enter a valid 10-digit Indian phone number', 'error');
+      return;
+    }
+    const cleanPin = (newAddr.pincode || '').trim();
+    if (!/^\d{6}$/.test(cleanPin)) {
+      addToast('Please enter a valid 6-digit PIN code', 'error');
+      return;
+    }
+
+    const isFirst = addresses.length === 0;
+    const updated = [
+      ...addresses,
+      {
+        ...newAddr,
+        phone: cleanPhone,
+        pincode: cleanPin,
+        id: `addr-${Date.now()}`,
+        isDefault: isFirst || newAddr.isDefault
+      }
+    ];
     setAddresses(updated);
     await updateProfile({ addresses: updated });
     setShowAddAddress(false);
     setNewAddr({ fullName: '', phone: '', house: '', street: '', city: '', state: 'Karnataka', pincode: '', isDefault: false });
+    addToast('New address saved successfully', 'success');
+  };
+
+  const handleDeleteAddress = async (indexToDelete) => {
+    const updated = addresses.filter((_, idx) => idx !== indexToDelete);
+    if (updated.length > 0 && !updated.some((a) => a.isDefault)) {
+      updated[0].isDefault = true;
+    }
+    setAddresses(updated);
+    await updateProfile({ addresses: updated });
+    addToast('Address removed successfully', 'info');
+  };
+
+  const handleSetDefaultAddress = async (indexToDefault) => {
+    const updated = addresses.map((addr, idx) => ({
+      ...addr,
+      isDefault: idx === indexToDefault
+    }));
+    setAddresses(updated);
+    await updateProfile({ addresses: updated });
+    addToast('Default delivery address updated', 'success');
   };
 
   return (
@@ -464,6 +508,24 @@ export const AccountPage = () => {
                           {addr.city}, {addr.state} - {addr.pincode}
                         </p>
                         <p className="text-[11px] text-stone-500">Phone: {addr.phone}</p>
+                        <div className="flex items-center justify-between pt-2 border-t border-cream-200">
+                          {!addr.isDefault && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetDefaultAddress(idx)}
+                              className="text-[11px] font-bold text-forest-800 hover:text-forest-600 hover:underline"
+                            >
+                              Make Default
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAddress(idx)}
+                            className="text-[11px] font-bold text-red-600 hover:text-red-800 hover:underline ml-auto"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     ))
                   )}

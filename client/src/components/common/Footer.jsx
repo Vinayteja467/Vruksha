@@ -2,19 +2,29 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, ShieldCheck, Heart, Instagram, Facebook, Linkedin, Youtube } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
+import { api } from '../../api/client';
 
 export const Footer = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 
-  const handleNewsletter = (e) => {
+  const handleNewsletter = async (e) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       addToast('Please enter a valid email address', 'error');
       return;
     }
-    addToast('Thank you for subscribing! Your 10% coupon code is VRUKSHA10', 'success');
-    setEmail('');
+    setLoading(true);
+    try {
+      const res = await api.post('/contact/newsletter', { email: email.trim() });
+      addToast(res.message || 'Thank you for subscribing! Your 10% coupon code is VRUKSHA10', 'success');
+      setEmail('');
+    } catch (err) {
+      addToast(err.message || 'Subscription failed. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,7 +79,7 @@ export const Footer = () => {
               <li><Link to="/shop?sort=featured" className="hover:text-cream-50 transition-colors">Best Sellers</Link></li>
               <li><Link to="/shop?sort=newest" className="hover:text-cream-50 transition-colors">New Arrivals</Link></li>
               <li><Link to="/category/popular-combos" className="hover:text-cream-50 transition-colors">Curated Combos</Link></li>
-              <li><Link to="/#build-a-box" className="hover:text-cream-50 transition-colors">Build Your Own Box</Link></li>
+              <li><Link to="/bulk-orders" className="hover:text-cream-50 transition-colors">Custom & Bulk Packs</Link></li>
             </ul>
           </div>
 
@@ -114,9 +124,10 @@ export const Footer = () => {
             />
             <button
               type="submit"
-              className="min-h-[44px] bg-earth-600 hover:bg-earth-500 text-white font-semibold px-5 py-2.5 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 flex-shrink-0 transition-colors"
+              disabled={loading}
+              className="min-h-[44px] bg-earth-600 hover:bg-earth-500 text-white font-semibold px-5 py-2.5 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 flex-shrink-0 transition-colors disabled:opacity-60"
             >
-              <span>Subscribe</span>
+              <span>{loading ? 'Subscribing...' : 'Subscribe'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </form>

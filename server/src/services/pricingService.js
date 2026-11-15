@@ -20,7 +20,7 @@ export const calculateOrderPricing = async ({ items, couponCode, deliveryMethod 
   let subtotal = 0;
 
   for (const rawItem of items) {
-    const productIdOrSlug = rawItem.product || rawItem.id || rawItem.slug;
+    const productIdOrSlug = rawItem.product || rawItem.id || rawItem.slug || rawItem._id;
     const requestedSize = rawItem.size || '100g';
     const quantity = Math.max(1, parseInt(rawItem.quantity, 10) || 1);
 

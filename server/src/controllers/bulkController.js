@@ -10,29 +10,41 @@ export const submitInquiry = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please fill out all required fields' });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(String(email).trim())) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid business email address' });
+    }
+
+    const cleanPhone = String(phone).trim().replace(/[\s-]/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid 10-digit Indian mobile number' });
+    }
+
     if (isConnectedToMongo) {
       const inquiry = await BulkInquiry.create({
-        name,
-        company,
-        email,
-        phone,
-        product,
-        requiredQuantity,
-        packagingPreference,
-        location,
-        message
+        name: String(name).trim(),
+        company: String(company).trim(),
+        email: String(email).trim().toLowerCase(),
+        phone: cleanPhone,
+        product: String(product).trim(),
+        requiredQuantity: String(requiredQuantity).trim(),
+        packagingPreference: packagingPreference ? String(packagingPreference).trim() : '',
+        location: String(location).trim(),
+        message: message ? String(message).trim() : ''
       });
       return res.status(201).json({ success: true, inquiry, message: 'Bulk quote inquiry submitted successfully' });
     } else {
       const inquiry = inMemoryStore.createBulkInquiry({
-        name,
-        company,
-        email,
-        phone,
-        product,
-        requiredQuantity,
-        packagingPreference,
-        location,
+        name: String(name).trim(),
+        company: String(company).trim(),
+        email: String(email).trim().toLowerCase(),
+        phone: cleanPhone,
+        product: String(product).trim(),
+        requiredQuantity: String(requiredQuantity).trim(),
+        packagingPreference: packagingPreference ? String(packagingPreference).trim() : '',
+        location: String(location).trim(),
+        message: message ? String(message).trim() : ''
+      });
         message
       });
       return res.status(201).json({ success: true, inquiry, message: 'Bulk quote inquiry submitted successfully' });
