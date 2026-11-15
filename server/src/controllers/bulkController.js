@@ -45,8 +45,6 @@ export const submitInquiry = async (req, res, next) => {
         location: String(location).trim(),
         message: message ? String(message).trim() : ''
       });
-        message
-      });
       return res.status(201).json({ success: true, inquiry, message: 'Bulk quote inquiry submitted successfully' });
     }
   } catch (err) {
