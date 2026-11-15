@@ -78,6 +78,18 @@ app.use('/api/bulk-orders', bulkRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Serverless Fallback Mounts (in case /api is stripped by any proxy)
+app.use('/auth', authRoutes);
+app.use('/products', productRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/orders', orderRoutes);
+app.use('/payments', paymentRoutes);
+app.use('/coupons', couponRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/bulk-orders', bulkRoutes);
+app.use('/contact', contactRoutes);
+app.use('/admin', adminRoutes);
+
 // Serve static client assets in production if client/dist exists
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));

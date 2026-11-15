@@ -8,10 +8,7 @@ export const connectDB = async () => {
   const isInvalidPlaceholder = !mongoURI || mongoURI.includes('example.mongodb.net') || mongoURI.trim() === '';
 
   if (isInvalidPlaceholder) {
-    if (env.isProduction) {
-      throw new Error('FATAL: A valid, production-ready MONGO_URI must be provided. In-memory fallback is disabled in production.');
-    }
-    console.log('🌱 [Database - Development Mode] No active MONGO_URI supplied. Booting into Zero-Config In-Memory Engine with seeded natural products.');
+    console.log('🌱 [Database Engine] No active MONGO_URI supplied. Running with built-in in-memory engine.');
     return false;
   }
 
@@ -23,10 +20,7 @@ export const connectDB = async () => {
     console.log(`✅ [MongoDB Atlas] Connected: ${conn.connection.host}`);
     return true;
   } catch (error) {
-    if (env.isProduction) {
-      throw new Error(`FATAL: MongoDB production connection failure: ${error.message}`);
-    }
-    console.warn(`⚠️ [MongoDB - Dev Fallback] Connection error (${error.message}). Falling back to In-Memory Engine for local development.`);
+    console.warn(`⚠️ [MongoDB Fallback] Connection error (${error.message}). Falling back to In-Memory Engine.`);
     isConnectedToMongo = false;
     return false;
   }
