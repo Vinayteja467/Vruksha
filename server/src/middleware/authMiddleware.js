@@ -45,6 +45,42 @@ export const protect = async (req, res, next) => {
   }
 };
 
+export const optionalProtect = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, env.JWT_SECRET);
+
+    if (isConnectedToMongo) {
+      req.user = await User.findById(decoded.id).select('-password');
+    } else {
+      req.user = await inMemoryStore.findUserById(decoded.id);
+      if (!req.user && (decoded.email || decoded.id)) {
+        req.user = {
+          id: decoded.id,
+          name: decoded.name || 'User',
+          email: decoded.email || '',
+          role: decoded.role || 'user',
+          addresses: [],
+          wishlist: []
+        };
+        inMemoryStore.users.push(req.user);
+      }
+    }
+  } catch (error) {
+    // Gracefully continue as guest if token expired or invalid
+  }
+
+  next();
+};
+
 export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();

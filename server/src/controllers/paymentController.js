@@ -168,6 +168,63 @@ export const verifyPayment = async (req, res, next) => {
   }
 };
 
+export const checkPaymentStatus = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, message: 'Razorpay order ID required' });
+    }
+
+    if (razorpayInstance) {
+      try {
+        const order = await razorpayInstance.orders.fetch(orderId);
+        const payments = await razorpayInstance.orders.fetchPayments(orderId);
+        const items = payments.items || [];
+
+        const successfulPayment = items.find(p => p.status === 'captured' || p.status === 'authorized');
+        if (successfulPayment || order.status === 'paid') {
+          return res.json({
+            success: true,
+            paid: true,
+            status: 'paid',
+            paymentId: successfulPayment ? successfulPayment.id : null,
+            orderId: order.id
+          });
+        }
+
+        const failedPayment = items.find(p => p.status === 'failed');
+        if (failedPayment) {
+          return res.json({
+            success: true,
+            paid: false,
+            status: 'failed',
+            errorDescription: failedPayment.error_description || 'Payment failed',
+            errorCode: failedPayment.error_code,
+            errorReason: failedPayment.error_reason
+          });
+        }
+
+        return res.json({
+          success: true,
+          paid: false,
+          status: order.status || 'created'
+        });
+      } catch (rzpErr) {
+        return res.status(502).json({
+          success: false,
+          message: rzpErr.error?.description || rzpErr.message
+        });
+      }
+    }
+
+    // Fallback for simulation/test without active Razorpay keys
+    res.json({ success: true, paid: false, status: 'created', isSimulated: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const handleRazorpayWebhook = async (req, res, next) => {
   try {
     const webhookSignature = req.headers['x-razorpay-signature'];

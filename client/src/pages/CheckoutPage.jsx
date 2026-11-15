@@ -149,6 +149,41 @@ export const CheckoutPage = () => {
       }
 
       if (isRzpLoaded && rzpRes.keyId && !rzpRes.isSimulated) {
+        let isOrderPlaced = false;
+        let pollInterval = null;
+
+        const completeOrder = async (paymentId, orderId, signature) => {
+          if (isOrderPlaced) return;
+          isOrderPlaced = true;
+          if (pollInterval) clearInterval(pollInterval);
+
+          try {
+            setLoading(true);
+            if (signature) {
+              await api.post('/payments/razorpay/verify', {
+                razorpay_order_id: orderId,
+                razorpay_payment_id: paymentId,
+                razorpay_signature: signature
+              });
+            }
+
+            const confirmedOrderRes = await api.post('/orders', {
+              ...basePayload,
+              razorpay_payment_id: paymentId
+            });
+
+            if (confirmedOrderRes.success && confirmedOrderRes.order) {
+              clearCart();
+              addToast('Payment verified & Order placed successfully! 🎉', 'success');
+              navigate('/order-success', { state: { order: confirmedOrderRes.order } });
+            }
+          } catch (err) {
+            console.error('Order confirmation error:', err);
+            addToast(err.data?.message || err.message || 'Payment received but failed to create order', 'error');
+            setLoading(false);
+          }
+        };
+
         const options = {
           key: rzpRes.keyId,
           amount: rzpRes.order.amount,
@@ -166,40 +201,68 @@ export const CheckoutPage = () => {
             color: '#1b4332'
           },
           handler: async function (response) {
-            try {
-              // Verify signature on server
-              const verifyRes = await api.post('/payments/razorpay/verify', {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature
-              });
-
-              if (verifyRes.success) {
-                // Create confirmed order with verified payment ID
-                const confirmedOrderRes = await api.post('/orders', {
-                  ...basePayload,
-                  razorpay_payment_id: response.razorpay_payment_id
-                });
-
-                if (confirmedOrderRes.success && confirmedOrderRes.order) {
-                  clearCart();
-                  addToast('Payment verified & Order placed successfully! 🎉', 'success');
-                  navigate('/order-success', { state: { order: confirmedOrderRes.order } });
-                }
-              }
-            } catch (verErr) {
-              addToast(verErr.data?.message || 'Payment verification failed', 'error');
-            }
+            await completeOrder(
+              response.razorpay_payment_id,
+              response.razorpay_order_id,
+              response.razorpay_signature
+            );
           },
           modal: {
-            ondismiss: function () {
+            ondismiss: async function () {
+              if (pollInterval) clearInterval(pollInterval);
+              if (isOrderPlaced) return;
+
+              // Final check if payment succeeded right before modal was closed
+              try {
+                const statusRes = await api.get(`/payments/razorpay/status/${rzpRes.order.id}`);
+                if (statusRes.paid && statusRes.paymentId) {
+                  await completeOrder(statusRes.paymentId, rzpRes.order.id);
+                  return;
+                }
+              } catch {}
+
               setLoading(false);
-              addToast('Payment cancelled. Your cart items are preserved.', 'info');
+              addToast('Payment window closed. Your cart items are preserved.', 'info');
             }
           }
         };
 
         const razorpayPaymentWindow = new window.Razorpay(options);
+
+        // Listen for explicit payment failure events
+        razorpayPaymentWindow.on('payment.failed', function (resp) {
+          console.error('Razorpay payment failure event:', resp.error);
+          if (pollInterval) clearInterval(pollInterval);
+          setLoading(false);
+          const errorMsg = resp.error?.description || resp.error?.reason || 'Payment failed';
+          addToast(`Payment failed: ${errorMsg}`, 'error');
+        });
+
+        // Background poller for UPI QR Code payments:
+        // Detects when the user completes payment on their phone even if the modal hangs
+        let pollCount = 0;
+        pollInterval = setInterval(async () => {
+          pollCount++;
+          if (pollCount > 40 || isOrderPlaced) {
+            clearInterval(pollInterval);
+            return;
+          }
+
+          try {
+            const statusRes = await api.get(`/payments/razorpay/status/${rzpRes.order.id}`);
+            if (statusRes.paid && statusRes.paymentId) {
+              clearInterval(pollInterval);
+              await completeOrder(statusRes.paymentId, rzpRes.order.id);
+            } else if (statusRes.status === 'failed') {
+              clearInterval(pollInterval);
+              setLoading(false);
+              addToast(`Payment failed: ${statusRes.errorDescription}`, 'error');
+            }
+          } catch (pollErr) {
+            console.warn('Payment polling error:', pollErr);
+          }
+        }, 3000);
+
         razorpayPaymentWindow.open();
         return;
       }

@@ -7,11 +7,11 @@ import {
   updateOrderStatus,
   trackOrder
 } from '../controllers/orderController.js';
-import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import { protect, optionalProtect, adminOnly } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', protect, createOrder);
+router.post('/', optionalProtect, createOrder);
 router.post('/track', trackOrder);
 router.get('/myorders', protect, getUserOrders);
 router.get('/all', protect, adminOnly, getAllOrders);
