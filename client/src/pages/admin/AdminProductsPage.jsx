@@ -80,8 +80,8 @@ export const AdminProductsPage = () => {
     sku: '',
     shortDescription: '',
     description: '',
-    ingredients: '',
-    usage: '',
+    ingredients: '100% Pure & Natural',
+    usage: 'Mix 1 teaspoon with water, milk, or smoothies daily.',
     storage: 'Store in an airtight container in a cool, dry place.',
     images: [],
     sizes: [
@@ -240,8 +240,17 @@ export const AdminProductsPage = () => {
           }))
         : [{ size: '100g', price: priceNum, originalPrice: originalPriceNum, inStock: true }];
 
+      const genSlug = editingProduct.slug || editingProduct.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const genCategorySlug = editingProduct.categorySlug || editingProduct.category.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
       const payload = {
         ...editingProduct,
+        slug: genSlug,
+        categorySlug: genCategorySlug,
+        ingredients: editingProduct.ingredients || `100% Pure & Natural ${editingProduct.name || 'Produce'}`,
+        usage: editingProduct.usage || 'Mix 1 teaspoon with water, warm milk, or smoothies daily.',
+        storage: editingProduct.storage || 'Store in an airtight container in a cool, dry place.',
+        sku: editingProduct.sku || `VRK-${Math.floor(1000 + Math.random() * 9000)}`,
         price: priceNum,
         originalPrice: originalPriceNum,
         sizes: sanitizedSizes
@@ -626,6 +635,29 @@ export const AdminProductsPage = () => {
                   onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                   className="w-full p-2.5 rounded-xl border border-stone-300"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">Ingredients</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 100% Pure Organic Beetroot"
+                    value={editingProduct.ingredients || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, ingredients: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-300"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">How to Use (Usage)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mix 1 tsp in water or smoothies daily"
+                    value={editingProduct.usage || ''}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, usage: e.target.value })}
+                    className="w-full p-2.5 rounded-xl border border-stone-300"
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-stone-200">

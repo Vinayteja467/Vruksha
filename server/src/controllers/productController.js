@@ -88,10 +88,56 @@ export const getProductBySlug = async (req, res, next) => {
 export const createProduct = async (req, res, next) => {
   try {
     const productData = { ...req.body };
-    const priceNum = Number(productData.price);
+    const priceNum = Number(productData.price) || 0;
     const originalPriceNum = Number(productData.originalPrice) || Math.round(priceNum * 1.25);
     productData.price = priceNum;
     productData.originalPrice = originalPriceNum;
+
+    // Auto-generate clean slug from name if missing
+    if (!productData.slug && productData.name) {
+      productData.slug = productData.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    // Auto-generate categorySlug
+    if (!productData.categorySlug && productData.category) {
+      productData.categorySlug = productData.category
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    // Default descriptions and product attributes if not provided
+    if (!productData.shortDescription) {
+      productData.shortDescription = productData.description ? productData.description.slice(0, 150) : productData.name;
+    }
+    if (!productData.description) {
+      productData.description = productData.shortDescription || `${productData.name} - 100% Pure, farm-fresh produce with natural nutrients.`;
+    }
+    if (!productData.ingredients) {
+      productData.ingredients = `100% Pure & Natural ${productData.name || 'Ingredients'}`;
+    }
+    if (!productData.usage) {
+      productData.usage = 'Mix 1 teaspoon (approx 5g) with water, smoothies, or recipes daily.';
+    }
+    if (!productData.storage) {
+      productData.storage = 'Store in an airtight container in a cool, dry place away from direct sunlight.';
+    }
+    if (!productData.sku) {
+      productData.sku = `VRK-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    // Handle duplicate slug in MongoDB
+    if (isConnectedToMongo && productData.slug) {
+      const existing = await Product.findOne({ slug: productData.slug });
+      if (existing) {
+        productData.slug = `${productData.slug}-${Math.floor(100 + Math.random() * 900)}`;
+      }
+    }
 
     if (productData.sizes && productData.sizes.length > 0) {
       productData.sizes = productData.sizes.map((s, idx) => ({
