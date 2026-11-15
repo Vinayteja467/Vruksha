@@ -528,7 +528,7 @@ export const ProductDetailPage = () => {
                 <h3 className="font-serif text-2xl font-bold text-forest-950">Shipping & Delivery Details</h3>
                 <ul className="space-y-2 text-xs text-stone-600 leading-relaxed">
                   <li>• <strong>Dispatched within 24 hours</strong> from our certified hygienic packing center.</li>
-                  <li>• <strong>Free standard delivery</strong> on all orders above ₹499.</li>
+                  <li>• <strong>Free standard delivery</strong> on all orders.</li>
                   <li>• Metro city transit: 2 to 4 business days. Regional transit: 4 to 7 business days.</li>
                   <li>• Real-time SMS and email tracking links provided upon courier handover.</li>
                 </ul>

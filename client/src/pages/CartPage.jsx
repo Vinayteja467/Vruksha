@@ -238,14 +238,8 @@ export const CartPage = () => {
                 </div>
               )}
               <div className="flex justify-between">
-                <span>Standard Delivery</span>
-                <span>
-                  {shippingFee === 0 ? (
-                    <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span>
-                  ) : (
-                    formatPrice(shippingFee)
-                  )}
-                </span>
+                <span>Shipping Fee</span>
+                <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span>
               </div>
               <div className="flex justify-between text-base font-bold text-forest-950 pt-3 border-t border-cream-200">
                 <span>Total Amount</span>

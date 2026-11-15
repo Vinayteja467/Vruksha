@@ -29,8 +29,8 @@ describe('Server Authoritative Pricing Service', () => {
     assert.strictEqual(result.totalInPaise, result.total * 100, 'Paise must be exact integer multiple');
   });
 
-  it('should apply free shipping when order exceeds threshold of ₹499', async () => {
-    // 3 units of 100g @ ₹249 = ₹747 >= ₹499
+  it('should apply free shipping on orders above ₹499', async () => {
+    // 3 units of 100g @ ₹249 = ₹747
     const items = [
       {
         product: 'prod-001',
@@ -44,12 +44,12 @@ describe('Server Authoritative Pricing Service', () => {
       deliveryMethod: 'standard'
     });
 
-    assert.strictEqual(result.shippingFee, 0, 'Shipping fee must be ₹0 when subtotal >= ₹499');
+    assert.strictEqual(result.shippingFee, 0, 'Shipping fee must be ₹0');
     assert.strictEqual(result.total, 747);
   });
 
-  it('should apply standard shipping fee of ₹49 when below threshold', async () => {
-    // Single 100g item: ₹249 < ₹499
+  it('should apply zero shipping charges (₹0) for all orders including below ₹499', async () => {
+    // Single 100g item: ₹249
     const items = [
       {
         product: 'prod-001',
@@ -63,8 +63,8 @@ describe('Server Authoritative Pricing Service', () => {
       deliveryMethod: 'standard'
     });
 
-    assert.strictEqual(result.shippingFee, 49, 'Standard shipping fee of ₹49 must apply below ₹499');
-    assert.strictEqual(result.total, 249 + 49);
+    assert.strictEqual(result.shippingFee, 0, 'Standard shipping fee must be ₹0 for every order');
+    assert.strictEqual(result.total, 249, 'Total must equal subtotal without any shipping charges');
   });
 
   it('should validate coupons against server database rules', async () => {

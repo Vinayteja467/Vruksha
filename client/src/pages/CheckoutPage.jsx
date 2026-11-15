@@ -38,8 +38,8 @@ export const CheckoutPage = () => {
     'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi NCR'
   ];
 
-  const expressSurcharge = formData.deliveryMethod === 'express' ? 50 : 0;
-  const finalTotal = total + expressSurcharge;
+  const expressSurcharge = 0;
+  const finalTotal = total;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -419,7 +419,7 @@ export const CheckoutPage = () => {
                       <p className="text-xs font-bold text-forest-950">Standard Delivery</p>
                       <p className="text-[11px] text-stone-500">2 - 5 business days transit</p>
                       <span className="text-xs font-semibold text-emerald-700 mt-1 block">
-                        {shippingFee === 0 ? 'FREE' : formatPrice(shippingFee)}
+                        FREE
                       </span>
                     </div>
                   </label>
@@ -442,8 +442,8 @@ export const CheckoutPage = () => {
                     <div>
                       <p className="text-xs font-bold text-forest-950">Priority Air Express</p>
                       <p className="text-[11px] text-stone-500">1 - 2 business days transit</p>
-                      <span className="text-xs font-semibold text-forest-800 mt-1 block">
-                        +₹50 Flat Surcharge
+                      <span className="text-xs font-semibold text-emerald-700 mt-1 block">
+                        FREE
                       </span>
                     </div>
                   </label>
@@ -534,13 +534,7 @@ export const CheckoutPage = () => {
                 )}
                 <div className="flex justify-between">
                   <span>Shipping Fee</span>
-                  <span>
-                    {shippingFee === 0 && expressSurcharge === 0 ? (
-                      <span className="text-emerald-700 font-bold">FREE</span>
-                    ) : (
-                      formatPrice(shippingFee + expressSurcharge)
-                    )}
-                  </span>
+                  <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-forest-950 pt-3 border-t border-cream-200">
                   <span>Total Amount</span>

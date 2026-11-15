@@ -21,13 +21,7 @@ export const ShippingPolicyPage = () => {
           <section className="space-y-2">
             <h2 className="font-serif font-bold text-lg text-forest-950">2. Shipping Charges & Free Shipping</h2>
             <p>
-              • <strong>Free Shipping:</strong> Automatically applied to all standard domestic retail orders with a subtotal of ₹499 and above.
-            </p>
-            <p>
-              • <strong>Standard Shipping:</strong> A flat ₹49 nominal shipping fee is charged for retail orders below ₹499.
-            </p>
-            <p>
-              • <strong>Priority Express Delivery:</strong> Optional 1-2 day air transit is available for an additional ₹50 surcharge.
+              • <strong>Free Shipping:</strong> Automatically applied to all domestic retail orders. We offer 100% Free Shipping on every order across India with zero shipping charges.
             </p>
           </section>
 

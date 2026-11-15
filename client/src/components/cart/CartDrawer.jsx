@@ -230,17 +230,11 @@ export const CartDrawer = () => {
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span>Shipping</span>
-                      <span>
-                        {shippingFee === 0 ? (
-                          <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span>
-                        ) : (
-                          formatPrice(shippingFee)
-                        )}
-                      </span>
+                      <span>Shipping Fee</span>
+                      <span className="text-emerald-700 font-bold uppercase tracking-wider text-[11px]">FREE</span>
                     </div>
                     <div className="flex justify-between text-sm font-bold text-forest-950 pt-2 border-t border-cream-200">
-                      <span>Total</span>
+                      <span>Total Amount</span>
                       <span>{formatPrice(total)}</span>
                     </div>
                   </div>

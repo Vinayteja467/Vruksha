@@ -4,8 +4,8 @@ import { useToast } from './ToastContext';
 
 const CartContext = createContext(null);
 
-const FREE_SHIPPING_THRESHOLD = 499;
-const STANDARD_SHIPPING_FEE = 49;
+const FREE_SHIPPING_THRESHOLD = 0;
+const STANDARD_SHIPPING_FEE = 0;
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
@@ -178,10 +178,10 @@ export const CartProvider = ({ children }) => {
     return appliedCoupon.discountAmount || 0;
   }, [appliedCoupon, subtotal]);
 
-  const freeShippingUnlocked = subtotal >= FREE_SHIPPING_THRESHOLD || appliedCoupon?.freeShipping;
-  const shippingFee = cartItems.length === 0 ? 0 : freeShippingUnlocked ? 0 : STANDARD_SHIPPING_FEE;
-  const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const total = Math.max(0, subtotal - discountAmount + shippingFee);
+  const freeShippingUnlocked = true;
+  const shippingFee = 0;
+  const amountToFreeShipping = 0;
+  const total = Math.max(0, subtotal - discountAmount);
   const totalItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const applyCoupon = async (code) => {

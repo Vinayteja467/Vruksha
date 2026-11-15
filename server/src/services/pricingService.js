@@ -3,9 +3,9 @@ import { Coupon } from '../models/Coupon.js';
 import { inMemoryStore } from '../config/inMemoryStore.js';
 import { isConnectedToMongo } from '../config/db.js';
 
-const FREE_SHIPPING_THRESHOLD = 499;
-const STANDARD_SHIPPING_FEE = 49;
-const EXPRESS_SURCHARGE = 50;
+const FREE_SHIPPING_THRESHOLD = 0;
+const STANDARD_SHIPPING_FEE = 0;
+const EXPRESS_SURCHARGE = 0;
 
 /**
  * Authoritative Server-Side Pricing Engine
@@ -109,11 +109,8 @@ export const calculateOrderPricing = async ({ items, couponCode, deliveryMethod 
     }
   }
 
-  // Shipping Calculation
-  const isFreeStandard = subtotal >= FREE_SHIPPING_THRESHOLD || freeShippingFromCoupon;
-  let baseShipping = isFreeStandard ? 0 : STANDARD_SHIPPING_FEE;
-  let expressFee = deliveryMethod === 'express' ? EXPRESS_SURCHARGE : 0;
-  let shippingFee = baseShipping + expressFee;
+  // Shipping Calculation: ₹0 for all orders (Free Shipping completely)
+  const shippingFee = 0;
 
   const total = Math.max(0, subtotal - discountAmount + shippingFee);
   const totalInPaise = Math.round(total * 100);
@@ -123,7 +120,7 @@ export const calculateOrderPricing = async ({ items, couponCode, deliveryMethod 
     subtotal,
     discountAmount,
     couponApplied: validatedCoupon || '',
-    shippingFee,
+    shippingFee: 0,
     deliveryMethod,
     total,
     totalInPaise,

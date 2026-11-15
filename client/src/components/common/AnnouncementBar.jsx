@@ -7,7 +7,7 @@ export const AnnouncementBar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-center gap-6 text-center">
         <div className="flex items-center gap-2">
           <Truck className="w-3.5 h-3.5 text-forest-400" />
-          <span>Free shipping on orders above ₹499</span>
+          <span>Free shipping on all orders</span>
         </div>
         <span className="hidden sm:inline text-forest-700">•</span>
         <div className="hidden sm:flex items-center gap-2">
